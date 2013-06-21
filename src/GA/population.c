@@ -33,7 +33,7 @@ static double MUTATION_RATE  = DEFAULT_MUTATION_RATE;
 /*
  * FIXEME move this to wherever  you want
  */
-#define RANDOM_RATIO 1.0
+#define RANDOM_RATIO 0.75
 
 Population * genRandPopulation(int pop_size){
     Population * pop;
@@ -83,37 +83,71 @@ void determineFitness(Population * pop){
  * START:  Added By Ahmed Al-Wattar June 20th, 2013
  */
 
-#define EQUEL_RATIO 1
+#define EQUEL_RATIO 0
 int calcDistancePopulation(Population * pop) {
 	int i, k;
-	int sum = 0;
-	int sumHam=0;
+    // CHANGE NAMES TO BE MORE DESCRIPTIVE - SEE PAPER
+	int sum = 0;    // hamming distance sum 
+	int sumHam=0; // hamming distance of hamming distances  sum
 	int sumEqual=0;
 	int indDistance;
 	static int indDistance_old;
-
+    int *uniqueAr;
+    double normalSumHam;
+    double normalSum;
+    int unique=1;
+    int sumUnique =0;
+    double normalUnique;
+    
+    
 	fprintf(stderr,
 			"WARNING [CalcDistancePopulation] this is a test\n"
 					"function do not used it unless you really know what u r  doing \n");
-	for (i = 0; i < pop->size - 1; i++) {
+    uniqueAr=calloc(pop->size,sizeof(int));
+    
+    for (i = 0; i < pop->size - 1; i++) {
+        unique=1;
 		for (k = i + 1; k < pop->size; ++k) {
 
 			indDistance = calcIndividualHamDistance(&(pop->member[i]),
 					&(pop->member[k]));
 
 			sum += indDistance;
-			if (i!=0 && k!=1)
+			if (i!=0 && k!=1){
 				sumHam+=!(indDistance==indDistance_old);
-
-			sumEqual+= (abs(pop->member[i].fitness - pop->member[k].fitness)<=EQUEL_RATIO);
-
+            }
+            
+           /*FIXME speedup there is no need to do all the time
+            */
+             if (abs(pop->member[i].fitness - pop->member[k].fitness)<=EQUEL_RATIO)
+             {
+                 unique=0;
+                 uniqueAr[k]=1;
+                 uniqueAr[i]=1;
+                 
+                 
+             }
+            
+			//sumEqual+= (abs(pop->member[i].fitness - pop->member[k].fitness)<=EQUEL_RATIO);
+            
 //			fprintf(stderr, " Indi Dist [%d & %d]-> [%d] h[%d]\n", i,k,
 //					indDistance,!(indDistance==indDistance_old));
 			indDistance_old=indDistance;
 
 		}
+        
+        
 	}
-	fprintf(stdout," \n\nHammig distance sum [%d] h[%d] --- EqDist -->[%d]\n\n  ", sum, sumHam,sumEqual);
+    for (i = 0; i < pop->size; i++) {
+        if(uniqueAr[i] == 0)
+            sumUnique++;
+    }
+    
+    normalSumHam =  sumHam / pow(pop->size, 2) * getNumGenes() / 2.0;
+    normalSum =  sum / pow(pop->size, 2) * getNumGenes() / 2.0;
+    normalUnique = (double) sumUnique / pop->size;
+    
+	fprintf(stdout," \n\nHammig distance sum [%f] h[%f] --- Unique -->[%f]\n\n  ", normalSum, normalSumHam,normalUnique);
 	return sum;
 }
 
