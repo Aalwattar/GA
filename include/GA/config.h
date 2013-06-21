@@ -31,8 +31,7 @@
 
 
 // Population Parameters
-#define DEFAULT_STOP_CONDITION 500
-#define DEFAULT_POP_SIZE 50
+//#define DEFAULT_POP_SIZE 50
 
 // Genetic operator rates
 #define DEFAULT_CROSSOVER_RATE 0.85

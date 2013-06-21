@@ -27,8 +27,8 @@
 #include <getopt.h>
 
 // FIX
-static int STOP_CONDITION = DEFAULT_STOP_CONDITION;
-static int POP_SIZE = DEFAULT_POP_SIZE;
+static int STOP_CONDITION = 0;
+static int POP_SIZE = 0;
 
 // FIX 
 int crossover_type = 1;
@@ -101,6 +101,7 @@ int totaldistance;
     #endif
     
     fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
+    printPopulation(pop);
     best_solution = findBest(pop);
     printIndividual(best_solution);
     
@@ -210,7 +211,14 @@ void initParameters(int argc, char ** argv){
         exit(1);
     
     initNapoleon(aif_filename);
-
+    
+    if(STOP_CONDITION == 0){
+        STOP_CONDITION = getNumGenes() * 2;
+    }
+    if(POP_SIZE == 0){
+        POP_SIZE = getNumGenes();
+    }
+    
     fprintf(stdout, "Parameters:\n");
     fprintf(stdout, "\tSeed = %d\n\n", seed);
     fprintf(stdout, "\tPopulation Size       = %d\n", POP_SIZE);

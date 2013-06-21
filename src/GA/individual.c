@@ -25,8 +25,6 @@
 #include <stdio.h>
 
 
-
-
 void initRandIndividual(Individual * ind){
     int i;
     

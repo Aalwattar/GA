@@ -46,12 +46,12 @@ Population * genRandPopulation(int pop_size){
     for(i=0; i < pop_size; i++){
     	if(randomNumber() <=RANDOM_RATIO)
     	{sum++;
-    		initRandIndividual(&(pop->member[i]));
+        initRandIndividual(&(pop->member[i]));
     	}else
     	{
     		initSeededIndividual(&(pop->member[i]));
     	}
-
+    
     }
 
     fprintf(stderr,"\nNo of random Ind [%d] out of [%d]\n",sum,i);
@@ -234,7 +234,7 @@ void printPopulation(Population * pop){
     
     printSummaryStatistics(pop);
     calcDistancePopulation(pop);
-
+    
     
 }
 
@@ -276,5 +276,3 @@ void printSummaryStatistics(Population * pop){
 //    // concise version
 //    fprintf(stdout, "Stats : %.5lf,\t%.5lf,\t%d,\t%d\n", mean, sd, min, max);
 }
-
-

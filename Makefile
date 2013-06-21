@@ -29,9 +29,10 @@ CC 			= gcc
 C_FLAGS 		= -std=gnu99 -Wall -pedantic
 
 DEBUG_FLAGS		= -DDEBUG -g -p -O0
-VERBOSE_FLAGS		= -DVERBOSE
+VERBOSE_FLAGS		= -DVERBOSE -O2
 EXE_FLAGS		= -DEXE -O2
-
+# FIX
+FINAL_ONLY 		= -O2
 
 C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA
 L_INCLUDES		= -lm
@@ -91,6 +92,10 @@ verbose : $(PROG_NAME)
 	
 exe     : C_FLAGS += $(EXE_FLAGS)
 exe     : $(PROG_NAME)
+
+# FIX
+final   : C_FLAGS += $(FINAL_ONLY)
+final   : $(PROG_NAME)
 
 ###############################################################################
 

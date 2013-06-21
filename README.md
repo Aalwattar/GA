@@ -71,8 +71,8 @@ Default Values
 - Mutation rate = 0.005
 - Mutation Algorithm = rotational mutation
 
-- Population size = 50
-- Number of Generations = 500
+- Population size = the number of tasks in the population
+- Number of Generations = 2x the number of tasks in the population
 
 - Selection Algorithm = Tournament selection
 - Replacement Algorithm = Keep best
