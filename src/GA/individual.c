@@ -25,6 +25,8 @@
 #include <stdio.h>
 
 
+
+
 void initRandIndividual(Individual * ind){
     int i;
     
@@ -36,6 +38,68 @@ void initRandIndividual(Individual * ind){
     // RESTRICTION - right now I restrict the GA from choosing any of the GPPs
     // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }
+
+
+/*
+ * START:  Added By Ahmed Al-Wattar june 20th 2013
+ */
+void calcIndividualPercentage(Individual * ind, int stat[][10]) {
+	int i;
+
+	for (i = 0; i < getNumGenes(); i++) {
+		stat[i][ind->encoding[i]]++;
+
+//		fprintf(stdout," %d|%d ",ind->encoding[i], stat[i][ind->encoding[i]]);
+	}
+
+//	fprintf(stdout," \n ");
+}
+int calcIndividualHamDistance(Individual * ind1, Individual * ind2) {
+	int i;
+	int sum = 0;
+//	fprintf(stderr, "\n");
+	for (i = 0; i < getNumGenes(); i++) {
+		//fprintf(stderr, " \x1b[1A%d\x1b[1D\x1b[1B%d" ,ind1->encoding[i] ,ind2->encoding[i]);
+		sum += !(ind1->encoding[i] == ind2->encoding[i]);
+	}
+	return sum;
+}
+
+	/*
+	 *FIXME Change to Define to whatever you need
+	 */
+
+#define MAX_NO_OF_TYPES 10
+
+void initSeededIndividual(Individual * ind) {
+
+	int i;
+	static int k[500];
+	int increased[MAX_NO_OF_TYPES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	ind->encoding = malloc(sizeof(int) * getNumGenes());
+
+	for (i = 0; i < getNumGenes(); i++)
+	{
+		if (k[i] == getNumArch(getTaskType(i)) - 1)
+		{
+			k[i] = 0;
+		}
+
+		ind->encoding[i] = k[i]+1;
+		k[i]++;
+
+
+	}
+
+}
+
+
+
+
+
+/*
+ * END change by Ahmed Al-Wattar
+ */
 
 void freeIndividual(Individual * i){
     free(i->encoding);

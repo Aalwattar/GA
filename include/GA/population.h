@@ -138,8 +138,10 @@ void printPopulation(Population *);
  * PURPOSE : Statistical information about a population. 
  * ARGUMENTS : Population * = the population that you wish visualize
  *****************************************************************************/
-void printSummaryStatistics(Population *);
 
+void printSummaryStatistics(Population *);
+int calcDistancePopulation(Population * );
+void calcPercentagePopulation(Population *);
 
 #endif	/* POPULATION_H */
 

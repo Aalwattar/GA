@@ -52,6 +52,15 @@ int main(int argc, char * argv[]){
     
     initParameters(argc, argv);
     pop = genRandPopulation(POP_SIZE);
+
+int totaldistance;
+
+//	totaldistance=   calcDistancePopulation(pop);
+    calcPercentagePopulation(pop);
+
+  //  fprintf(stderr,"\nTotal Distance %d  \n",totaldistance);
+   // exit(0);
+
     determineFitness(pop);
     sortByFitness(pop);
 

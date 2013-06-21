@@ -123,5 +123,12 @@ void twoPointCrossover(Individual *, Individual *);
 
 void printIndividual(Individual *);
 
+
+
+void calcIndividualPercentage(Individual * , int [][10] ) ;
+int calcIndividualHamDistance(Individual * , Individual * );
+void initSeededIndividual(Individual * );
+
+
 #endif	/* INDIVIDUAL_H */
 
