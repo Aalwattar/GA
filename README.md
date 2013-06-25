@@ -75,7 +75,7 @@ Default Values
 - Number of Generations = 2x the number of tasks in the population
 
 - Selection Algorithm = Tournament selection
-- Replacement Algorithm = Keep best
+- Replacement Algorithm = Replace All
 
 Program Output
 - Error messages are currently being printed to stderr

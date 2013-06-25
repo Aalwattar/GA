@@ -75,9 +75,9 @@ int main(int argc, char * argv[]){
         
         // FIX
         if(replacement_type == 1)
-            pop = retainBest(pop, selected);
-        else
             pop = replaceAll(pop, selected);
+        else  
+            pop = retainBest(pop, selected);
 
         generation_num++;
     }
@@ -107,7 +107,7 @@ void initParameters(int argc, char ** argv){
 
     opterr = 0;
 
-    while((c = getopt(argc, argv, "a:b:c:d:g:m:n:p:r:s:t:vw:")) != -1){
+    while((c = getopt(argc, argv, "a:b:c:d:g:m:n:p:r:s:t:Vvw:")) != -1){
         switch(c){
             case 'a':
                 arch_filename = optarg;
@@ -148,11 +148,11 @@ void initParameters(int argc, char ** argv){
                 setPopSize(atoi(optarg));
                 break;
             case 'r':
-                if(strncasecmp("all", optarg, strlen(optarg)) == 0)
+                if(strncasecmp("keep-best", optarg, strlen(optarg))  == 0 ||
+                    strncasecmp("keep_best", optarg, strlen(optarg)) == 0 ||
+                    strncasecmp("keep best", optarg, strlen(optarg)) == 0)
                     replacement_type = 2;
-                else if(strncasecmp("keep-best", optarg, strlen(optarg)) != 0 &&
-                        strncasecmp("keep_best", optarg, strlen(optarg)) != 0 &&
-                        strncasecmp("keep best", optarg, strlen(optarg)) != 0 ){
+                else if(strncasecmp("all", optarg, strlen(optarg)) != 0){
                     fprintf(stderr, "Unknown replacement option : %s\n", optarg);
                     exit(1);
                 }
@@ -171,8 +171,9 @@ void initParameters(int argc, char ** argv){
                 seed = atoi(optarg);
                 break;
                 
+            case 'V':
             case 'v':
-                fprintf(stdout, "Offline Scheduler version 1.2.1  (Genetic Algorithm + Napoleon)\n");
+                fprintf(stdout, "Offline Scheduler version 1.2.2  (Genetic Algorithm + Napoleon)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
                 exit(0);
                 
@@ -236,9 +237,9 @@ void initParameters(int argc, char ** argv){
         fprintf(stdout, "\tSelection Algorithm   = Random Selection\n");
     
     if(replacement_type == 1)
-        fprintf(stdout, "\tReplacement Algorithm = Keep Best\n");
-    else
         fprintf(stdout, "\tReplacement Algorithm = Replace All\n\n");
+    else
+        fprintf(stdout, "\tReplacement Algorithm = Keep Best\n\n");
 }
 
 

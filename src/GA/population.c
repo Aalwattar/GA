@@ -67,7 +67,7 @@ Population * genSeededPopulation(int pop_size){
     	}
     }
 
-    fprintf(stderr,"\nNo of random Ind [%d] out of [%d]\n", num_random, pop_size);
+    fprintf(stdout,"\nNo of random Ind [%d] out of [%d]\n", num_random, pop_size);
     return pop;
 }
 
