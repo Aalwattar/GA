@@ -141,7 +141,7 @@ void printPopDiversity(Population * pop) {
     
     
     hamming_normalizer = (pop->size * pop->size * getNumGenes()) / 2.0;
-	fprintf(stdout,"\n\nHammig distance sum [%f] h[%f] --- Unique -->[%f]\n\n  ",
+	fprintf(stdout,"\n\nHammig distance sum [%f] h[%f] --- Unique % -->[%f]\n\n",
                     (double) pop_distance / hamming_normalizer,
                     (double) sum_hamming / hamming_normalizer,
                     percent_unique);

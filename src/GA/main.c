@@ -107,7 +107,7 @@ void initParameters(int argc, char ** argv){
 
     opterr = 0;
 
-    while((c = getopt(argc, argv, "a:b:c:d:g:m:n:p:r:s:t:w:")) != -1){
+    while((c = getopt(argc, argv, "a:b:c:d:g:m:n:p:r:s:t:vw:")) != -1){
         switch(c){
             case 'a':
                 arch_filename = optarg;
@@ -170,6 +170,11 @@ void initParameters(int argc, char ** argv){
             case 't':
                 seed = atoi(optarg);
                 break;
+                
+            case 'v':
+                fprintf(stdout, "Offline Scheduler version 1.2.1  (Genetic Algorithm + Napoleon)\n");
+                fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
+                exit(0);
                 
             case 'w':
                 setRuntimeWeight(atof(optarg));
