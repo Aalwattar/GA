@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : May 31, 2013
+ * Modified : June 26, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -51,24 +51,11 @@ int main(int argc, char * argv[]){
     int generation_num = 0;
     
     initParameters(argc, argv);
-    pop = genRandPopulation(POP_SIZE);
-
-int totaldistance;
-
-//	totaldistance=   calcDistancePopulation(pop);
-    calcPercentagePopulation(pop);
-
-  //  fprintf(stderr,"\nTotal Distance %d  \n",totaldistance);
-   // exit(0);
+    pop = genSeededPopulation(POP_SIZE);
+    printGeneComposition(pop);
 
     determineFitness(pop);
     sortByFitness(pop);
-
-    #ifdef VERBOSE
-        fprintf(stdout, "\n----------------------------------------------------------\n\n");
-        fprintf(stdout, "Starting Population:\n");
-        printPopulation(pop);
-    #endif
 
     while(generation_num < STOP_CONDITION){
         #if  (defined VERBOSE || defined EXE)
@@ -95,7 +82,7 @@ int totaldistance;
         generation_num++;
     }
 
-    #ifdef VERBOSE
+    #if (defined VERBOSE || defined EXE)
         fprintf(stdout, "\nFinal Population:\n");
         printPopulation(pop);
     #endif
@@ -204,7 +191,7 @@ void initParameters(int argc, char ** argv){
         exit(1);
     }
     
-    // FIX - Check the return values
+    // FIX - Check the return value
     seedRandGenerator(seed);
     
     if(initArchLibrary(arch_filename) != true)

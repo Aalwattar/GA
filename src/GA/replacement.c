@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 6, 2013
+ * Modified : June 23, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -21,37 +21,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// FIX - requires thorough testing before implementation
-//Population * replaceWorst(Population * original, Population * replacements, int num_replaced){
-//    Population * pop;
-//    int pop_size = original->size;
-//    int i, j;
-//    
-//    pop = malloc(sizeof(Population));
-//    pop->size = pop_size;
-//    pop->member = malloc(sizeof(Individual) * pop_size);
-//    
-//    // FIX - should only have 1 sort ?? 
-//    sortByFitness(original);
-//    sortByFitness(replacements);
-//    
-//    j=0;
-//    for(i = 0 ; i < num_replaced; i++)
-//        duplicateIndividual(&(pop->member[i]), &(replacements->member[j++]));
-//
-//    for(; i < pop_size; i++)
-//        duplicateIndividual(&(pop->member[i]), &(original->member[i - num_replaced]));
-//    
-//    freePopulation(original);
-//    freePopulation(replacements);
-//    
-//    return pop;
-//}
-
 
 Population * replaceAll(Population * original, Population * replacements){
     freePopulation(original);
     return replacements;
+}
+
+Population * replaceWorst(Population * original, Population * replacements, int num_replaced){
+    Population * pop;
+    int pop_size = original->size;
+    int i, j, k;
+    
+    pop = malloc(sizeof(Population));
+    pop->size = pop_size;
+    pop->member = malloc(sizeof(Individual) * pop_size);
+    
+    sortByFitness(replacements);
+    
+    i = j = k = 0;
+    while(k < original->size && j < num_replaced){
+        if((original->member[i]).fitness <= (replacements->member[j]).fitness)
+            duplicateIndividual(&(pop->member[k++]), &(original->member[i++]));
+        else
+            duplicateIndividual(&(pop->member[k++]), &(replacements->member[j++]));
+    }
+    
+    for(; k < pop->size; k++)
+        duplicateIndividual(&(pop->member[k]), &(original->member[i++]));
+    
+    freePopulation(original);
+    freePopulation(replacements);
+    
+    return pop;
 }
 
 Population * retainBest(Population * original, Population * next_gen){

@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 6, 2013
+ * Modified : June 23, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -22,11 +22,23 @@
 #include "population.h"
 
 /******************************************************************************
+ * NAME : replaceAll
+ * 
+ * PURPOSE : Replaces all of the individuals in a population with their
+ *              children
+ * ARGUMENTS : Population * = the destination population
+ *             Population * = the source population
+ * 
+ * PRECONDITIONS : Both populations must have already had the fitnesses of
+ *                      all of their members evaluated (through evaluateFitness)
+ *****************************************************************************/
+Population * replaceAll(Population *, Population *);
+
+/******************************************************************************
  * NAME : replaceWorst
  * 
  * PURPOSE : Replaces the worst individuals in one population with 
- *              the best individuals from another population
- *              another
+ *              the best individuals from another population12
  * ARGUMENTS : Population * = the destination population
  *             Population * = the source population
  *             int = the number of individuals that you wish to replace
@@ -38,8 +50,18 @@
  *****************************************************************************/
 Population * replaceWorst(Population *, Population *, int);
 
-Population * replaceAll(Population *, Population *);
 
+/******************************************************************************
+ * NAME : retainBest
+ * 
+ * PURPOSE : Replaces the current population with the fittest individuals from
+ *              both the children and parent populations.
+ * ARGUMENTS : Population * = the destination population
+ *             Population * = the source population
+ * 
+ * PRECONDITIONS : Both populations must have already had the fitnesses of
+ *                      all of their members evaluated (through evaluateFitness)
+ *****************************************************************************/
 Population * retainBest(Population *, Population *);
 
 #endif	/* REPLACEMENT_H */

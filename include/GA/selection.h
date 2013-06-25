@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 6, 2013
+ * Modified : June 23, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -27,7 +27,6 @@
  * PURPOSE : Select individuals from a population based on the the hard
  *              tournament selection algorithm
  * ARGUMENTS : Population * = The population that you wish to select from 
- *             int = the number of individuals that you wish to select
  * 
  * RETURNS : A Population that contains deep copies of all of the winners from 
  *              the requested number of tournaments. 
@@ -40,10 +39,9 @@ Population * tournamentSelection(Population *);
  * 
  * PURPOSE : Randomly selects individuals from a population.
  * ARGUMENTS : Population * = The population that you wish to select from 
- *             int = the number of individuals that you wish to select
  * 
- * RETURNS : A Population that contains deep copies of all of the winners from 
- *              the requested number of tournaments. 
+ * RETURNS : A Population that contains deep copies of all of randomly
+ *              selected individuals
  *****************************************************************************/
 Population * randomSelection(Population *);
 

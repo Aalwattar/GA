@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : May 30, 2013
+ * Modified : June 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -50,6 +50,19 @@ typedef struct{
 void initRandIndividual(Individual *);
 
 /******************************************************************************
+ * NAME : initSeededIndividual
+ * 
+ * PURPOSE : Initializes an individual with a predetermined set of genes to
+ *              ensure the diversity of the initial population. This function
+ *              will produce a different individual every time it is called. 
+ * ARGUMENTS : Individual * = the individual to initialize
+ * 
+ * PRECONDITIONS : the Individual struct must already exist in memory
+ *****************************************************************************/
+void initSeededIndividual(Individual * );
+
+
+/******************************************************************************
  * NAME : duplicateIndividual
  * 
  * PURPOSE : Creates a deep copy of the individual passed in as an argument 
@@ -74,14 +87,28 @@ void duplicateIndividual(Individual *, Individual *);
  *****************************************************************************/
 void freeIndividual(Individual *);
 
-// FIX
+/******************************************************************************
+ * NAME : mutateRandomly
+ * 
+ * PURPOSE : Perform mutation on an Individual. The probability of mutating one
+ *      individual gene (MUTATION_RATE) is pre-determined by the user. The new
+ *      allele will be randomly chosen (but cannot be the initial allele)
+ * ARGUMENTS : Individual * = the Individual that you wish to mutate
+ * 
+ * PRECONDITIONS : the Individual passed in as a parameter must have been
+ *      previously created either through initRandIndividual() or 
+ *      duplicateIndividual().
+ *****************************************************************************/
 void mutateRandomly(Individual * ind);
 
 /******************************************************************************
  * NAME : mutateRotationally
  * 
  * PURPOSE : Perform mutation on an Individual. The probability of mutating one
- *      individual gene (MUTATION_RATE) is pre-determined by the user.
+ *      individual gene (MUTATION_RATE) is pre-determined by the user. The 
+ *      mutated allele will become an architecture of larger area than the 
+ *      original. If there exist no architectures with larger area, then the 
+ *      mutated gene becomes the smallest architecture available.
  * ARGUMENTS : Individual * = the Individual that you wish to mutate
  * 
  * PRECONDITIONS : the Individual passed in as a parameter must have been
@@ -120,15 +147,13 @@ void onePointCrossover(Individual *, Individual *);
  *****************************************************************************/
 void twoPointCrossover(Individual *, Individual *);
 
-
+/******************************************************************************
+ * NAME : printIndividual
+ * 
+ * PURPOSE : Print an Individual's genotype and fitness information to stdout.
+ * ARGUMENTS : Individual * = The individual that you wish to visualize
+ *****************************************************************************/
 void printIndividual(Individual *);
-
-
-
-void calcIndividualPercentage(Individual * , int [][10] ) ;
-int calcIndividualHamDistance(Individual * , Individual * );
-void initSeededIndividual(Individual * );
-
 
 #endif	/* INDIVIDUAL_H */
 

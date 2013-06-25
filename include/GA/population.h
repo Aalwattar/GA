@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 6, 2013
+ * Modified : June 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -46,6 +46,22 @@ typedef struct{
 Population * genRandPopulation(int);
 
 /******************************************************************************
+ * NAME : genSeededPopulation
+ * 
+ * PURPOSE : Creates a population of pre-determined individuals to ensure a 
+ *              diverse starting population. PERCENT_POP_RANDOM in config.h
+ *              determines what percentage of the population is randomly 
+ *              generated, with the remaining individuals being seeded.
+ * ARGUMENTS : int = the number of individuals in the population
+ * 
+ * RETURNS : A population consisting of some random and some seeded individuals
+ * 
+ * NOTE : the population that is returned should eventually be freed through
+ *              the usage of freePopulation();
+ *****************************************************************************/
+Population * genSeededPopulation(int);
+
+/******************************************************************************
  * NAME : freePopulation
  * 
  * PURPOSE : Frees all dynamically allocated data from within a Population
@@ -57,7 +73,6 @@ Population * genRandPopulation(int);
 void freePopulation(Population *);
 
 
-// FIX
 /******************************************************************************
  * NAME : evolvePopulation
  * 
@@ -139,9 +154,24 @@ void printPopulation(Population *);
  * ARGUMENTS : Population * = the population that you wish visualize
  *****************************************************************************/
 void printSummaryStatistics(Population *);
-int calcDistancePopulation(Population * );
-void calcPercentagePopulation(Population *);
 
+/******************************************************************************
+ * NAME : printPopDiversity
+ * 
+ * PURPOSE : print a population's diversity information
+ * ARGUMENTS : Population * = the population that you wish to analyze
+ * 
+ * RETURNS : the hamming distance of the 
+ *****************************************************************************/
+void printPopDiversity(Population *);
+
+/******************************************************************************
+ * NAME : printGeneComposition
+ * 
+ * PURPOSE : Print the occurrence rates for each allele of each gene
+ * ARGUMENTS : Population * = the population that you wish to analyze
+ *****************************************************************************/
+void printGeneComposition(Population *);
 
 #endif	/* POPULATION_H */
 

@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : May 31, 2013
+ * Modified : June 25, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -26,37 +26,48 @@
 #include <math.h>
 #include <limits.h>
 
+
 // FIX
 static double CROSSOVER_RATE = DEFAULT_CROSSOVER_RATE;
 static double MUTATION_RATE  = DEFAULT_MUTATION_RATE;
 
-/*
- * FIXEME move this to wherever  you want
- */
-#define RANDOM_RATIO 0.75
 
 Population * genRandPopulation(int pop_size){
     Population * pop;
     int i;
-    int sum=0;
     
     pop = malloc(sizeof(Population));
     pop->member = malloc(sizeof(Individual) * pop_size);
+    pop->size = pop_size;
 
-    for(i=0; i < pop_size; i++){
-    	if(randomNumber() <=RANDOM_RATIO)
-    	{sum++;
+    for(i=0; i < pop_size; i++)
         initRandIndividual(&(pop->member[i]));
-    	}else
-    	{
+
+    fprintf(stderr,"\nRandom Individuals: [%d] out of [%d]\n", pop_size, pop_size);    
+    return pop;
+}
+
+
+Population * genSeededPopulation(int pop_size){
+    Population * pop;
+    int num_random;
+    int i;
+        
+    pop = malloc(sizeof(Population));
+    pop->member = malloc(sizeof(Individual) * pop_size);
+    pop->size = pop_size;
+
+    num_random = 0;
+    for(i=0; i < pop_size; i++){
+    	if(randomNumber() <= PERCENT_POP_RANDOM){
+            initRandIndividual(&(pop->member[i]));
+            num_random++;
+    	}else{
     		initSeededIndividual(&(pop->member[i]));
     	}
-    
     }
 
-    fprintf(stderr,"\nNo of random Ind [%d] out of [%d]\n",sum,i);
-    pop->size = pop_size;
-    
+    fprintf(stderr,"\nNo of random Ind [%d] out of [%d]\n", num_random, pop_size);
     return pop;
 }
 
@@ -79,118 +90,97 @@ void determineFitness(Population * pop){
         evaluateFitness(&(pop->member[i]));
 }
 
-/*
- * START:  Added By Ahmed Al-Wattar June 20th, 2013
- */
+void printPopDiversity(Population * pop) {
+    static int old_ind_distance;    // the previously calculated hamming distance between a pair of individuals
+    int ind_distance; // the hamming distance between a pair of individuals
+	int pop_distance; // the sum of the hamming distance between each pair of individuals in the population
+	int sum_hamming;  // sum of the hamming distances of (the hamming distances between two individuals)
+    int hamming_normalizer;
 
-#define EQUEL_RATIO 0
-int calcDistancePopulation(Population * pop) {
-	int i, k;
-    // CHANGE NAMES TO BE MORE DESCRIPTIVE - SEE PAPER
-	int sum = 0;    // hamming distance sum 
-	int sumHam=0; // hamming distance of hamming distances  sum
-	int sumEqual=0;
-	int indDistance;
-	static int indDistance_old;
-    int *uniqueAr;
-    double normalSumHam;
-    double normalSum;
-    int unique=1;
-    int sumUnique =0;
-    double normalUnique;
+    int *uniqueFitness; // measures if a phenotype (fitness) is unique
+    int sum_unique;
+    double percent_unique;
+    int i, g, j;
     
+    fprintf(stderr, "WARNING [CalcDistancePopulation] is a test function\n"
+					"Please try to avoid its usage\n");
     
-	fprintf(stderr,
-			"WARNING [CalcDistancePopulation] this is a test\n"
-					"function do not used it unless you really know what u r  doing \n");
-    uniqueAr=calloc(pop->size,sizeof(int));
+    pop_distance = 0;
+    sum_hamming = 0;
+    uniqueFitness = calloc(pop->size, sizeof(int));
     
-    for (i = 0; i < pop->size - 1; i++) {
-        unique=1;
-		for (k = i + 1; k < pop->size; ++k) {
-
-			indDistance = calcIndividualHamDistance(&(pop->member[i]),
-					&(pop->member[k]));
-
-			sum += indDistance;
-			if (i!=0 && k!=1){
-				sumHam+=!(indDistance==indDistance_old);
-            }
+    for(i=0; i < pop->size - 1; i++) {
+		for (j= i+1; j < pop->size; j++) {
             
-           /*FIXME speedup there is no need to do all the time
-            */
-             if (abs(pop->member[i].fitness - pop->member[k].fitness)<=EQUEL_RATIO)
-             {
-                 unique=0;
-                 uniqueAr[k]=1;
-                 uniqueAr[i]=1;
-                 
-                 
-             }
+            // calculate the hamming distance between a pair of individuals
+            ind_distance = 0;
+            for (g=0; g < getNumGenes(); g++)
+                if((pop->member[i]).encoding[g] != (pop->member[j]).encoding[g])
+                    ind_distance++;
             
-			//sumEqual+= (abs(pop->member[i].fitness - pop->member[k].fitness)<=EQUEL_RATIO);
+            pop_distance = pop_distance + ind_distance;
             
-//			fprintf(stderr, " Indi Dist [%d & %d]-> [%d] h[%d]\n", i,k,
-//					indDistance,!(indDistance==indDistance_old));
-			indDistance_old=indDistance;
-
+            // sum the hamming distance of the hamming distances
+            if ((i != 0) && (j != 1) && (ind_distance != old_ind_distance))
+				sum_hamming++;
+                        
+            // calculate the number of different phenotypes
+            if (abs((pop->member[i]).fitness - (pop->member[j]).fitness) <= ACCEPTABLE_DEVIATION_ERROR)
+                uniqueFitness[j] = 1;
+            
+			old_ind_distance = ind_distance;
 		}
-        
-        
 	}
-    for (i = 0; i < pop->size; i++) {
-        if(uniqueAr[i] == 0)
-            sumUnique++;
-    }
     
-    normalSumHam =  sumHam / pow(pop->size, 2) * getNumGenes() / 2.0;
-    normalSum =  sum / pow(pop->size, 2) * getNumGenes() / 2.0;
-    normalUnique = (double) sumUnique / pop->size;
+    // calculate the percentage of unique individuals in the population
+    sum_unique = 0;
+    for (i=0; i < pop->size; i++)
+        if(uniqueFitness[i] == 0)
+            sum_unique++;
+    percent_unique = (double) sum_unique / pop->size;
     
-	fprintf(stdout," \n\nHammig distance sum [%f] h[%f] --- Unique -->[%f]\n\n  ", normalSum, normalSumHam,normalUnique);
-	return sum;
+    
+    hamming_normalizer = (pop->size * pop->size * getNumGenes()) / 2.0;
+	fprintf(stdout,"\n\nHammig distance sum [%f] h[%f] --- Unique -->[%f]\n\n  ",
+                    (double) pop_distance / hamming_normalizer,
+                    (double) sum_hamming / hamming_normalizer,
+                    percent_unique);
+    
+    free(uniqueFitness);
 }
 
-void initStatArray(int stat[][10], int imax, int jmax) {
-	int i, j;
-	for (i = 0; i < imax; ++i) {
-		for (j = 0; j < jmax; ++j) {
-			stat[i][j] = 0;
+void printGeneComposition(Population * pop) {
+    int ** occurrence;
+    int num_genes = getNumGenes();
+    int num_types = MAX_NUM_TYPES;   // FIX
+    int g, i, t;
+    
+	fprintf(stderr, "WARNING [printGeneComposition] is a test function\n"
+					"Please try to avoid its usage\n");
+    
+	occurrence = malloc(sizeof(int *) * num_genes);
+    for(i=0; i < num_genes; i++)
+        occurrence[i] = calloc(num_types, sizeof(int));
+        
+    // count the occurrence of each allele
+	for(i=0; i < pop->size; i++)
+        for(g=0; g < num_genes; g++)
+            occurrence[g][(pop->member[i]).encoding[g]]++;
 
-		}
-
-	}
-}
-
-void calcPercentagePopulation(Population * pop) {
-	int i, j;
-	/*
-	 * FIXME this is ugly but we just need for one simple test
-	 */
-	fprintf(stderr,
-			"WARNING [CalcPercentagePopulation] this is a test\n"
-					"function do not used it unless you really know what u r doing \n");
-	int stat[500][10];
-
-	initStatArray(stat, 500, 10);
-	for (i = 0; i < pop->size; i++) {
-		calcIndividualPercentage(&(pop->member[i]), stat);
-	}
-
-	for (i = 0; i < getNumGenes(); ++i) {
-		fprintf(stdout,"Gene[%d]---> \t",i);
-		for (j = 0; j < getNumArch(getTaskType(i)); j++) {
-
-			fprintf(stdout, "\t[%%%d]",(int)((100 * stat[i][j]) / (float) pop->size));
-
-		}
+    // print the occurrence data
+	for (g = 0; g < num_genes; g++) {
+		fprintf(stdout,"Gene[%d]---> \t", g);
+        
+		for (t=0; t < getNumArch(getTaskType(g)); t++)
+			fprintf(stdout, "\t[%%%d]",(int)((100 * occurrence[g][t]) / (float) pop->size));
 		fprintf(stdout,"\n");
 	}
+    
+    for(i=0; i < num_genes; i++)
+        free(occurrence[i]);
+    free(occurrence);
 }
 
-/*
- * END change by Ahmed Al-Wattar
- */
 
 // The compare function for qsort
 int compare(const void * p1, const void * p2){
@@ -267,9 +257,7 @@ void printPopulation(Population * pop){
     #endif
     
     printSummaryStatistics(pop);
-    calcDistancePopulation(pop);
-    
-    
+    printPopDiversity(pop);
 }
 
 void printSummaryStatistics(Population * pop){

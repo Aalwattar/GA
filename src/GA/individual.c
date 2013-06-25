@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Author   : Jennifer Winer
+ * Author   : Jennifer Winer & Ahmed Al-Wattar
  * 
  * Project  : A DFG Off-Line Task Scheduler for FPGA
  *              - The Genetic Algorithm for determining the ideal implementation
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 6, 2013
+ * Modified : June 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -16,6 +16,7 @@
  *              solution to the problem (an individual in the population)
  ******************************************************************************/
 
+#include "config.h"
 #include "individual.h"
 #include "fitness.h"
 #include "population.h"
@@ -37,67 +38,23 @@ void initRandIndividual(Individual * ind){
     // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }
 
-
-/*
- * START:  Added By Ahmed Al-Wattar june 20th 2013
- */
-void calcIndividualPercentage(Individual * ind, int stat[][10]) {
+// FIX - get rid of MAX_NUM_GENES
+void initSeededIndividual(Individual * ind){
+    static int alleleTracker[MAX_NUM_GENES];
 	int i;
 
-	for (i = 0; i < getNumGenes(); i++) {
-		stat[i][ind->encoding[i]]++;
-
-//		fprintf(stdout," %d|%d ",ind->encoding[i], stat[i][ind->encoding[i]]);
-	}
-
-//	fprintf(stdout," \n ");
-}
-int calcIndividualHamDistance(Individual * ind1, Individual * ind2) {
-	int i;
-	int sum = 0;
-//	fprintf(stderr, "\n");
-	for (i = 0; i < getNumGenes(); i++) {
-		//fprintf(stderr, " \x1b[1A%d\x1b[1D\x1b[1B%d" ,ind1->encoding[i] ,ind2->encoding[i]);
-		sum += !(ind1->encoding[i] == ind2->encoding[i]);
-	}
-	return sum;
-}
-
-	/*
-	 *FIXME Change to Define to whatever you need
-	 */
-
-#define MAX_NO_OF_TYPES 10
-
-void initSeededIndividual(Individual * ind) {
-
-	int i;
-	static int k[500];
-	int increased[MAX_NO_OF_TYPES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	ind->encoding = malloc(sizeof(int) * getNumGenes());
 
-	for (i = 0; i < getNumGenes(); i++)
-	{
-		if (k[i] == getNumArch(getTaskType(i)) - 1)
-		{
-			k[i] = 0;
+	for (i=0; i < getNumGenes(); i++){
+		if (alleleTracker[i] == getNumArch(getTaskType(i)) - 1){
+			alleleTracker[i] = 0;
 		}
 
-		ind->encoding[i] = k[i]+1;
-		k[i]++;
-
-
+		ind->encoding[i] = ++(alleleTracker[i]);
+        // RESTRICTION - right now I restrict the GA from choosing any of the GPPs (AKA - the encoding of the individual cannot be zero)
+        // ORIGINAL - ind->encoding[i] = k[i]++;
 	}
-
 }
-
-
-
-
-
-/*
- * END change by Ahmed Al-Wattar
- */
 
 void freeIndividual(Individual * i){
     free(i->encoding);
@@ -108,14 +65,15 @@ void duplicateIndividual(Individual * copy, Individual * original){
     
     copy->encoding = malloc(sizeof(int) * getNumGenes());
     
-    for(i=0; i<getNumGenes(); i++){
+    for(i=0; i<getNumGenes(); i++)
         copy->encoding[i] = original->encoding[i];
-        copy->energy = original->energy;
-        copy->exec_time = original->exec_time;
-        copy->fitness = original->fitness;
-        copy->num_reuse = original->num_reuse;
-        copy->prefetch = original->prefetch;
-    }
+    
+    copy->energy =      original->energy;
+    copy->exec_time =   original->exec_time;
+    copy->fitness =     original->fitness;
+    copy->num_reuse =   original->num_reuse;
+    copy->prefetch =    original->prefetch;
+
 }
 
 void mutateRotationally(Individual * ind){
@@ -179,13 +137,6 @@ void twoPointCrossover(Individual * p1, Individual * p2){
         cross2 = getNumGenes() * randomNumber();
 
     if(cross1 > cross2){
-        
-//        // Unnecessary, but fun!
-//        Individual * swap;
-//        swap = p1;
-//        p1 = p2;
-//        p2 = swap;
-        
         temp = cross1; 
         cross1 = cross2;
         cross2 = temp;

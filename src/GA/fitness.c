@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 6, 2013
+ * Modified : June 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -50,8 +50,6 @@ typedef struct{
 
 
 // contains all of the architectures of an task
-
-
 typedef struct{
     int num_impl;           // the number of architectures for this task
     Implementation * impl;  // the properties of each architecture
@@ -64,6 +62,7 @@ static Operation * arch_library;
 /******************************************************************************
  *****************            ARCHITECTURE FILE I/O           *****************
  *****************************************************************************/
+static int getColumns(int);
 
 /******************************************************************************
  * NAME : parseArchLibrary
@@ -238,7 +237,6 @@ void printArchLibrary(void){
 static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
 
 
-// FIX
 void setRuntimeWeight(double weight){
     if(0 <= weight && weight <= 1){
         RUNTIME_WEIGHT = weight;
@@ -247,7 +245,6 @@ void setRuntimeWeight(double weight){
     
     fprintf(stderr, "Invalid runtime weight %.3lf.\n", weight);
     fprintf(stderr, "The runtime rate must be a decimal number between 0 and 1\n");
-    
     exit(1);
 }
 
@@ -255,43 +252,26 @@ double getRuntimeWeight(void){
     return RUNTIME_WEIGHT;
 }
 
-/******************************************************************************
- * NAME : getColumns
- * 
- * PURPOSE : getter for number of columns that the implementation (architecture)
- *              of a particular gene takes up
- * ARGUMENTS : int = the position of the gene (task) in a chromosome
- * 
- * PRECONDITIONS : This function should only be called after initNapoleon()
- *                      returns true.
- * 
- * RETURNS : the "width" of the implementation (or architecture) indicated by
- *              the chosen task
- *****************************************************************************/
 static int getColumns(int);
-
-
 static int getRows(int);
 static int getConfigTime(int);
 static int getExecTime(int);
 static int getConfigPower(int);
 static int getExecPower(int);
 
+
 // FIX - MAKE NON GLOBAL!!!
 t_task_interface *task_interface; //
 t_task *task; //
-
+int * succ_adj_mat;
+int * reuse_mat;
 
 // FIX - make smaller
 // FIX - add error checking
-
-
 bool initNapoleon(char * aif_filename){
     FILE *aif_strm;
     int err;
     int i;
-
-    // FIX - parse command line arguments
 
     //allocate memory for the tasks and the task interfaces
     task = (t_task*)malloc(sizeof (t_task) * __NUM_MAX_TASKS);
@@ -327,43 +307,44 @@ bool initNapoleon(char * aif_filename){
     fclose(aif_strm);
 
     if(err != __NO_ERROR){
-        print_error(err);
+        print_error(err);    //and exit on unsuccessful execution of the parse_aif function
         return false;
     }
-
-    return true;
-}
-
-
-void freeNapoleon(void){
-    free(task_interface);
-    free(task);
-}
-
-// FIX - add error checking
-
-
-void evaluateFitness(Individual * ind){
-    GA_Info schedule;
-    int * succ_adj_mat;
-    int * reuse_mat;
-    int err = __NO_ERROR;
-    int i = 0;
 
     //allocate memory for the successor graph adjacency matrix
     succ_adj_mat = (int*)malloc(sizeof (int)*(task->width + 2)*(task->width + 2));
 
     //create the successor matrix
-    //and exit on unsuccessful execution of the parse_aif function
-    if((err = create_graph(task, task_interface, succ_adj_mat)))
+    if((err = create_graph(task, task_interface, succ_adj_mat))){
         print_error(err);
+        return false;
+    }
 
     //allocate memory for the reuse matrix
     reuse_mat = (int*)malloc(sizeof (int)*(task->width + 2)*(task->width + 2));
 
     //create the reuse matrix
-    if((err = create_reuse_mat(task, reuse_mat)))
+    if((err = create_reuse_mat(task, reuse_mat))){
         print_error(err);
+        return false;
+    }
+    
+    return true;
+}
+
+
+void freeNapoleon(void){
+    free(reuse_mat);
+    free(succ_adj_mat);
+    
+    free(task_interface);
+    free(task);
+}
+
+// FIX - add error checkingThis has
+void evaluateFitness(Individual * ind){
+    GA_Info schedule;
+    int i = 0;
 
     for(i = 0; i < task[0].width; i++){
         task[i + 1].impl = ind->encoding[i];
@@ -381,12 +362,10 @@ void evaluateFitness(Individual * ind){
         task[i + 1].leftmost_column = 0;
     }
 
+    // TESTING - for debugging Napoleon
     //display_task(task, task_interface);
 
     schedule = Napoleon(NULL, succ_adj_mat, task->width, task);
-
-    free(reuse_mat);
-    free(succ_adj_mat);
 
     ind->fitness = (schedule.runtime * RUNTIME_WEIGHT) + (schedule.power * (1.0 - RUNTIME_WEIGHT));
     ind->energy = schedule.power;
@@ -408,12 +387,22 @@ int getTaskType(int task_num){
     return task[task_num + 1].type - 1;
 }
 
-
+/******************************************************************************
+ * NAME : getColumns
+ * 
+ * PURPOSE : getter for number of columns that the implementation (architecture)
+ *              of a particular gene takes up
+ * ARGUMENTS : int = the position of the gene (task) in a chromosome
+ * 
+ * PRECONDITIONS : This function should only be called after initNapoleon()
+ *                      returns true.
+ * 
+ * RETURNS : the "width" of the implementation (or architecture) indicated by
+ *              the chosen task
+ *****************************************************************************/
 static int getColumns(int task_num){
     return ((arch_library[getTaskType(task_num)]).impl[task[task_num + 1].impl]).columns;
 }
-
-
 /******************************************************************************
  * NAME : getRows
  * 
@@ -504,6 +493,7 @@ static int getExecPower(int task_num){
 }
 
 
+/*** AHMED'S STUFF ***/
 #define NO 0
 #define YES 1
 

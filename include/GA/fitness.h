@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : May 22, 2013
+ * Modified : June 23, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -94,10 +94,6 @@ typedef struct{
     int reuse;
 }GA_Info;         
 
-// FIX
-void setRuntimeWeight(double);
-double getRuntimeWeight(void);
-
 /******************************************************************************
  * NAME : initNapoleon
  * 
@@ -125,8 +121,6 @@ void freeNapoleon(void);
  * 
  * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
  * ARGUMENTS : Individual * = the possible solution to be evaluated
- * 
- * RETURNS : the fitness of the chromosome argument
  *****************************************************************************/
 void evaluateFitness(Individual *);
 
@@ -155,6 +149,28 @@ int getNumGenes(void);
  * RETURNS : the type of task (or Operation) of the chosen task
  *****************************************************************************/
 int getTaskType(int);
+
+/******************************************************************************
+ * NAME : setRuntimeWeight
+ * 
+ * PURPOSE : The fitness function is derived of X% schedule runtime, and 
+ *              (1 - X)% power. This function sets the value of X
+ * ARGUMENTS : double * = The weight of the runtime when calculating a
+ *                        chromosome's fitness
+ * 
+ * PRECONDITIONS: The argument must be a number between 0 and 1 inclusive
+ *****************************************************************************/
+void setRuntimeWeight(double);
+
+/******************************************************************************
+ * NAME : getRuntimeWeight
+ * 
+ * PURPOSE : return the weight of runtime from the schedule that the chromosome
+ *              produces when calculating a chromosome's fitness
+ * 
+ * RETURNS : runtime's weight
+ *****************************************************************************/
+double getRuntimeWeight(void);
 
 #endif	/* FITNESS_H */
 

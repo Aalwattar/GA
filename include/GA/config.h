@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : June 17, 2013
- * Modified : June 17, 2013
+ * Modified : June 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -39,6 +39,12 @@
 
 // misc
 #define BUFF_SIZE 500
+
+// AHMED'S STUFF
+#define MAX_NUM_TYPES 10
+#define MAX_NUM_GENES 500
+#define PERCENT_POP_RANDOM 0.75
+#define ACCEPTABLE_DEVIATION_ERROR 0
 
 #endif	/* CONFIG_H */
 
