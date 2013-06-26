@@ -35,7 +35,7 @@ for filename in $BENCHMARKS ; do
     DFG=$( find -iname "${filename}*" | grep ".toGraph" | awk '{printf "%s ", $0}' )
     
     echo "reset" >> .gnuplot_script
-    echo "set terminal postscript eps enhanced" >> .gnuplot_script
+    echo "set terminal postscript eps color enhanced" >> .gnuplot_script
     echo "set output \"eps/$filename.eps\"" >> .gnuplot_script
     
     echo 'set style data linespoints' >> .gnuplot_script

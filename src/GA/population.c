@@ -102,7 +102,7 @@ void printPopDiversity(Population * pop) {
     double percent_unique;
     int i, g, j;
     
-    fprintf(stderr, "WARNING [CalcDistancePopulation] is a test function\n"
+    fprintf(stderr, "WARNING [printPopDiversity] is a test function\n"
 					"Please try to avoid its usage\n");
     
     pop_distance = 0;
@@ -257,7 +257,7 @@ void printPopulation(Population * pop){
     #endif
     
     printSummaryStatistics(pop);
-    printPopDiversity(pop);
+//    printPopDiversity(pop);
 }
 
 void printSummaryStatistics(Population * pop){

@@ -91,9 +91,13 @@ mkdir pictures
 # FIX!!!
 gnuplot << INSTRUCTIONS
     filenames = "B2_25.avg B1_50.avg B2_100.avg B1_150.avg"
+    ideal_25 = 480
+    ideal_50 = 595
+    ideal_100 = 936
+    ideal_150 = 1795
 
     reset
-    set terminal postscript eps enhanced 
+    set terminal postscript eps color enhanced 
     set output "eps/$(basename -s .txt $1)_$opt.eps"
     
     set style data linespoints
@@ -105,7 +109,7 @@ gnuplot << INSTRUCTIONS
     set ylabel "Fitness"
     set grid
     
-    plot for [data in filenames] ".toGraph/".data using 1:2 title data
+    plot for [data in filenames] ".toGraph/".data using 1:2 title data, ideal_25, ideal_50, ideal_100, ideal_150
 
     reset
     set terminal png enhanced
@@ -119,6 +123,6 @@ gnuplot << INSTRUCTIONS
     set ylabel "Fitness"
     set grid
     
-    plot for [data in filenames] ".toGraph/".data using 1:2 title data
+    plot for [data in filenames] ".toGraph/".data using 1:2 title data, ideal_25, ideal_50, ideal_100, ideal_150
             
 INSTRUCTIONS

@@ -52,7 +52,7 @@ int main(int argc, char * argv[]){
     
     initParameters(argc, argv);
     pop = genSeededPopulation(POP_SIZE);
-    printGeneComposition(pop);
+//    printGeneComposition(pop);
 
     determineFitness(pop);
     sortByFitness(pop);
@@ -81,15 +81,11 @@ int main(int argc, char * argv[]){
 
         generation_num++;
     }
-
-    #if (defined VERBOSE || defined EXE)
-        fprintf(stdout, "\nFinal Population:\n");
-        printPopulation(pop);
-    #endif
     
     fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
     printPopulation(pop);
     best_solution = findBest(pop);
+    fprintf(stdout, "\n-----------------   BEST SOLUTION  -----------------\n");
     printIndividual(best_solution);
     
     freePopulation(pop);
