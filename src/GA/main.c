@@ -29,7 +29,7 @@
 #include <getopt.h>
 
 // FIX
-static int STOP_CONDITION = 0;
+static int STOP_CONDITION = 150;
 static int POP_SIZE = 0;
 
 // FIX 
@@ -171,7 +171,7 @@ void initParameters(int argc, char ** argv){
                 
             case 'V':
             case 'v':
-                fprintf(stdout, "Offline Scheduler version 1.3.0  (Genetic Algorithm + Napoleon)\n");
+                fprintf(stdout, "Offline Scheduler version 1.3.1  (Genetic Algorithm + Napoleon)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
                 exit(0);
                 
@@ -206,9 +206,6 @@ void initParameters(int argc, char ** argv){
     InitSimulator();
     
     
-    if(STOP_CONDITION == 0){
-        STOP_CONDITION = getNumGenes() * 2;
-    }
     if(POP_SIZE == 0){
         POP_SIZE = getNumGenes();
     }
