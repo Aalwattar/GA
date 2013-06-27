@@ -24,21 +24,21 @@
 ###############################################################################
 
 #environment variables
-LD_LIBRARY_PATH := ${LD_LIBRARY_PATH}:~/work/rcSimulator/Release/
+#LD_LIBRARY_PATH := ${LD_LIBRARY_PATH}:~/work/rcSimulator/Release/
 
 
 #compiler options
 CC 			= gcc
-C_FLAGS 		= -std=gnu99 -Wall -pedantic
+C_FLAGS 		= -std=gnu99 -Wall -pedantic 
 
 DEBUG_FLAGS		= -DDEBUG -g -p -O0
 VERBOSE_FLAGS		= -DVERBOSE -O2
-EXE_FLAGS		= -DEXE -O2
+EXE_FLAGS		= -DEXE -O2 -fmessage-length=0 -MMD -MP 
 # FIX
 FINAL_ONLY 		= -O2
 
 C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA 
-L_INCLUDES		= -L/home/jennifer/work/rcSimulator/Release/ -lm -llibrcsSimulator
+L_INCLUDES		= -L"/export/home/grad/aalwatta/works/rcSimulator/rcSimulator/Release" -lm -lrcsSimulator
 
 #directory names
 SRC_DIR			= src
@@ -103,7 +103,7 @@ final   : $(PROG_NAME)
 ###############################################################################
 
 $(PROG_NAME) : $(OBJS)
-	$(CC) $(OBJS) $(L_INCLUDES) -o $(PROG_NAME)
+	$(CC) $(L_INCLUDES) $(OBJS) -o $(PROG_NAME)
 
 
 $(OBJ_DIR)/$(NAPOLEON_DIR)/%.o: $(SRC_DIR)/$(NAPOLEON_DIR)/%.c $(OBJ_DIR) 
