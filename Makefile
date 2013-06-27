@@ -23,8 +23,11 @@
 ##
 ###############################################################################
 
-#compiler options
+#environment variables
+LD_LIBRARY_PATH := ${LD_LIBRARY_PATH}:~/work/rcSimulator/Release/
 
+
+#compiler options
 CC 			= gcc
 C_FLAGS 		= -std=gnu99 -Wall -pedantic
 
@@ -34,8 +37,8 @@ EXE_FLAGS		= -DEXE -O2
 # FIX
 FINAL_ONLY 		= -O2
 
-C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA
-L_INCLUDES		= -lm
+C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA 
+L_INCLUDES		= -L/home/jennifer/work/rcSimulator/Release/ -lm -llibrcsSimulator
 
 #directory names
 SRC_DIR			= src

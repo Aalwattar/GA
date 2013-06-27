@@ -19,6 +19,8 @@
 #include "selection.h"
 #include "replacement.h"
 
+#include "rcsSimulator.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,10 +84,10 @@ int main(int argc, char * argv[]){
         generation_num++;
     }
     
-    fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
+    fprintf(stdout, "\nFINAL RESULT:\n");
     printPopulation(pop);
     best_solution = findBest(pop);
-    fprintf(stdout, "\n-----------------   BEST SOLUTION  -----------------\n");
+    fprintf(stdout, "\nBEST SOLUTION:\n");
     printIndividual(best_solution);
     
     freePopulation(pop);
@@ -169,7 +171,7 @@ void initParameters(int argc, char ** argv){
                 
             case 'V':
             case 'v':
-                fprintf(stdout, "Offline Scheduler version 1.2.2  (Genetic Algorithm + Napoleon)\n");
+                fprintf(stdout, "Offline Scheduler version 1.3.0  (Genetic Algorithm + Napoleon)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
                 exit(0);
                 
@@ -199,7 +201,10 @@ void initParameters(int argc, char ** argv){
     if(initArchLibrary(arch_filename) != true)
         exit(1);
     
-    initNapoleon(aif_filename);
+//    // FIX
+//    initNapoleon(aif_filename);
+    InitSimulator();
+    
     
     if(STOP_CONDITION == 0){
         STOP_CONDITION = getNumGenes() * 2;
@@ -241,7 +246,10 @@ void initParameters(int argc, char ** argv){
 
 void freeParameters(void){
     freeArchLibrary();
-    freeNapoleon();
+
+    // FIX
+	CleanSimulator();
+//    freeNapoleon();
 }
 
 void setPopSize(int size){
