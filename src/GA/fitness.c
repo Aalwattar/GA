@@ -26,6 +26,7 @@
 #include "napoleon.h"
 #include "io.h"
 #include "types.h"
+#include "offlineScheduler.h"
 
 #include "rcsSimulator.h"
 
@@ -34,6 +35,11 @@
 #include <string.h>
 #include <strings.h>
 
+
+// FIX 
+static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
+// FIX - MAKE NON GLOBAL!!!
+static t_task *task; 
 
 /******************************************************************************
  *****************         ARHITECTURE  DATA STORAGE         ******************
@@ -235,8 +241,7 @@ void printArchLibrary(void){
  **********        FITNESS FUNCTION (INTERFACE WITH NAPOLEON)        **********
  *****************************************************************************/
 
-// FIX 
-static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
+
 
 
 void setRuntimeWeight(double weight){
@@ -345,70 +350,77 @@ void freeNapoleon(void){
 
 // FUTURE - consider passing in an integer array and returning one value as
 //          fitness (return int, take integer array)
-void evaluateFitness(Individual * ind){
-    struct SimData input;
-    struct SimResults output;
-    int i;
-    
-    // Zero the output
-    output.totalTime = 0;
-	output.noOfReuse = 0;
-	output.noOfConfiguration = 0;
-	output.noSW2HWMigration = 0;
-	output.noHW2SWMigration = 0;
-	output.noOfSWTasks = 0;
-	output.noSWBusyCounter = 0;
-	output.noHWBusyCounter = 0;
-
-    //initialize the input
-    input.dFGID = 0;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
-    input.noPRR = 5;    // FIX - make a variable
-    input.noGPP = 0;    // FIX - make a variable
-    input.noOfNodes = getNumGenes();
-    for(i=0; i<input.noOfNodes; i++)
-        input.typeData[i] = ind->encoding[i];// FIX - ASSUMES THAT HIS ARRAY STARTS AT 0
-
-    
-	RunSimulator(&input, &output);
-}
-
-//// FIX - add error checkingThis has
 //void evaluateFitness(Individual * ind){
-//    GA_Info schedule;
-//    int i = 0;
+//    struct SimData input;
+//    struct SimResults output;
+//    int i;
+//    
+//    // Zero the output
+//    output.totalTime = 0;
+//	output.noOfReuse = 0;
+//	output.noOfConfiguration = 0;
+//	output.noSW2HWMigration = 0;
+//	output.noHW2SWMigration = 0;
+//	output.noOfSWTasks = 0;
+//	output.noSWBusyCounter = 0;
+//	output.noHWBusyCounter = 0;
 //
-//    for(i = 0; i < task[0].width; i++){
-//        task[i + 1].impl = ind->encoding[i];
+//    //initialize the input
+//    input.dFGID = 7;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
+//    input.noPRR = 5;    // FIXME - make a variable
+//    input.noGPP = 0;    // FIX - make a variable
+//    input.noOfNodes = getNumGenes();
+//    for(i=0; i<input.noOfNodes; i++)
+//        input.typeData[i] = ind->encoding[i];// FIX - ASSUMES THAT HIS ARRAY STARTS AT 0
 //
-//        task[i + 1].columns = getColumns(i);
-//        task[i + 1].rows = getRows(i);
-//        task[i + 1].reconfig_pwr = getConfigPower(i);
-//        task[i + 1].exec_pwr = getExecPower(i);
-//        task[i + 1].latency = getExecTime(i);
-//        task[i + 1].reconfig_time = getConfigTime(i);
-//
-//        task[i + 1].exec_sched = 0;
-//        task[i + 1].reconfig_sched = 0;
-//        task[i + 1].bottommost_row = 0;
-//        task[i + 1].leftmost_column = 0;
-//    }
-//
-//    // TESTING - for debugging Napoleon
-//    //display_task(task, task_interface);
-//
-//    schedule = Napoleon(NULL, succ_adj_mat, task->width, task);
-//
-//    ind->fitness = (schedule.runtime * RUNTIME_WEIGHT) + (schedule.power * (1.0 - RUNTIME_WEIGHT));
-//    ind->energy = schedule.power;
-//    ind->exec_time = schedule.runtime;
-//    ind->num_reuse = schedule.reuse;
-//    ind->prefetch = schedule.prefetch;
+//    
+//	RunSimulator(&input, &output);
+//    
+//    ind->fitness = output.totalTime;
+//    ind->energy = 0;    
+//    ind->exec_time = output.totalTime;
+//    ind->num_reuse = 0;
+//    ind->prefetch = 0;
 //}
+
+// FIX - add error checkingThis has
+void evaluateFitness(t_task * task, Individual * ind){
+    GA_Info schedule;
+    int i = 0;
+
+    for(i = 0; i < task[0].width; i++){
+        task[i + 1].impl = ind->encoding[i];
+
+        task[i + 1].columns = getColumns(i);
+        task[i + 1].rows = getRows(i);
+        task[i + 1].reconfig_pwr = getConfigPower(i);
+        task[i + 1].exec_pwr = getExecPower(i);
+        task[i + 1].latency = getExecTime(i);
+        task[i + 1].reconfig_time = getConfigTime(i);
+
+        task[i + 1].exec_sched = 0;
+        task[i + 1].reconfig_sched = 0;
+        task[i + 1].bottommost_row = 0;
+        task[i + 1].leftmost_column = 0;
+    }
+
+    // TESTING - for debugging Napoleon
+    //display_task(task, task_interface);
+
+    schedule = getSchedule(task);
+
+    ind->fitness = (schedule.runtime * RUNTIME_WEIGHT) + (schedule.power * (1.0 - RUNTIME_WEIGHT));
+    ind->energy = schedule.power;
+    ind->exec_time = schedule.runtime;
+    ind->num_reuse = schedule.reuse;
+    ind->prefetch = schedule.prefetch;
+}
 
 
 int getNumGenes(void){
     // the with member of the source node (task[0]) = the number of tasks
     //   (nodes) in the DFG = Number of genes on a chromosome
+    
     return task[0].width;
 }
 

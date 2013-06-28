@@ -72,7 +72,7 @@ Default Values
 - Mutation Algorithm = rotational mutation
 
 - Population size = the number of tasks in the population
-- Number of Generations = 2x the number of tasks in the population
+- Number of Generations = 150
 
 - Selection Algorithm = Tournament selection
 - Replacement Algorithm = Replace All

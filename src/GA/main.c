@@ -20,6 +20,7 @@
 #include "replacement.h"
 
 #include "rcsSimulator.h"
+#include "offlineScheduler.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,10 +28,12 @@
 #include <strings.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <time.h>
 
 // FIX
 static int STOP_CONDITION = 150;
 static int POP_SIZE = 0;
+static t_task * task; 
 
 // FIX 
 int crossover_type = 1;
@@ -46,6 +49,39 @@ void setPopSize(int);
 // FUTURE - implement this
 bool populationConverged(Population * pop);
 
+///*   SCHEDULER TESTING MAIN  */
+//int main(int argc, char * argv[]){
+//    time_t start,end;               // timing stuff
+//
+//    Individual ind;
+//    char chromosome[] = "212151115412111111122151112151211211111113151151213121112111111155111151151111111115112121112211151511111113113112311131121112212111111111151111111122";
+//    int i;
+//    
+//    initParameters(argc, argv);
+//    
+//    ind.encoding = malloc(sizeof(int) * getNumGenes());
+//    for(i=0; i<getNumGenes(); i++)
+//        ind.encoding[i] = chromosome[i] - '1';
+//    
+//    fprintf(stdout, "Starting Napoleon\n");
+//    start = time(NULL);
+//    evaluateFitnessNapoleon(&ind);
+//    end = time(NULL);
+//    printIndividual(&ind);
+//    printf("Napoleon used %f seconds.\n\n", difftime(end, start));
+//    
+//    fprintf(stdout, "Starting Napoleon\n");
+//    start = time(NULL);
+//    evaluateFitness(&ind);
+//    end = time(NULL);
+//    printIndividual(&ind);
+//    printf("RCScheduler used %f seconds.\n\n", difftime(end, start));
+//    
+//    freeParameters();
+//    return EXIT_SUCCESS;
+//}
+
+/* REGULAR MAIN */
 // a generational keep-best approach
 int main(int argc, char * argv[]){
     Population * pop, * selected;
@@ -91,9 +127,11 @@ int main(int argc, char * argv[]){
     printIndividual(best_solution);
     
     freePopulation(pop);
+    // FIX
+    free(task);
     freeParameters();
     return EXIT_SUCCESS;
-}
+} 
 
 // FIX - too long
 // FIX - print out every parameter selected
@@ -171,7 +209,7 @@ void initParameters(int argc, char ** argv){
                 
             case 'V':
             case 'v':
-                fprintf(stdout, "Offline Scheduler version 1.3.1  (Genetic Algorithm + Napoleon)\n");
+                fprintf(stdout, "Offline Scheduler version X.0.0  (Compare the runtimes and results of Napoleon and the Online scheduler on the same chromosome)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
                 exit(0);
                 
@@ -202,7 +240,7 @@ void initParameters(int argc, char ** argv){
         exit(1);
     
 //    // FIX
-//    initNapoleon(aif_filename);
+    initNapoleon(aif_filename);
     InitSimulator();
     
     
@@ -246,7 +284,7 @@ void freeParameters(void){
 
     // FIX
 	CleanSimulator();
-//    freeNapoleon();
+    freeNapoleon();
 }
 
 void setPopSize(int size){

@@ -21,6 +21,7 @@
 
 #include <stdbool.h>
 #include "individual.h"
+#include "types.h"
 
 /******************************************************************************
  *****************           ARCHITECTURE FILE I/O            *****************
@@ -107,6 +108,7 @@ typedef struct{
  *****************************************************************************/
 bool initNapoleon(char *);
 
+// FIX
 /******************************************************************************
  * NAME : freeNapoleon
  * 
@@ -122,7 +124,7 @@ void freeNapoleon(void);
  * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
  * ARGUMENTS : Individual * = the possible solution to be evaluated
  *****************************************************************************/
-void evaluateFitness(Individual *);
+void evaluateFitness(t_task * task, Individual *);
 
 /******************************************************************************
  * NAME : getNumGenes
@@ -171,6 +173,9 @@ void setRuntimeWeight(double);
  * RETURNS : runtime's weight
  *****************************************************************************/
 double getRuntimeWeight(void);
+
+// FIX
+void evaluateFitnessNapoleon(Individual * ind);
 
 #endif	/* FITNESS_H */
 

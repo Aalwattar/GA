@@ -23,22 +23,18 @@
 ##
 ###############################################################################
 
-#environment variables
-#LD_LIBRARY_PATH := ${LD_LIBRARY_PATH}:~/work/rcSimulator/Release/
-
-
 #compiler options
 CC 			= gcc
-C_FLAGS 		= -std=gnu99 -Wall -pedantic 
+C_FLAGS 		= -std=gnu99 -Wall -pedantic
 
 DEBUG_FLAGS		= -DDEBUG -g -p -O0
 VERBOSE_FLAGS		= -DVERBOSE -O2
-EXE_FLAGS		= -DEXE -O2 -fmessage-length=0 -MMD -MP 
+EXE_FLAGS		= -DEXE -O2 
 # FIX
 FINAL_ONLY 		= -O2
 
 C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA 
-L_INCLUDES		= -L"/export/home/grad/aalwatta/works/rcSimulator/rcSimulator/Release" -lm -lrcsSimulator
+L_INCLUDES		= -L/home/jennifer/work/rcSimulator/Release -lrcsSimulator -p
 
 #directory names
 SRC_DIR			= src
@@ -54,10 +50,10 @@ OBJS			= $(addprefix $(OBJ_DIR)/, \
                           $(NAPOLEON_DIR)/ilp.o \
                           $(NAPOLEON_DIR)/napoleon.o \
                           $(NAPOLEON_DIR)/main.o \
+			  $(NAPOLEON_DIR)/offlineScheduler.o \
                           \
                           $(GA_DIR)/fitness.o \
                           $(GA_DIR)/individual.o \
-                          $(GA_DIR)/main.o \
                           $(GA_DIR)/population.o \
                           $(GA_DIR)/replacement.o \
                           $(GA_DIR)/selection.o \
@@ -103,7 +99,7 @@ final   : $(PROG_NAME)
 ###############################################################################
 
 $(PROG_NAME) : $(OBJS)
-	$(CC) $(L_INCLUDES) $(OBJS) -o $(PROG_NAME)
+	$(CC) $(L_INCLUDES) $(OBJS) -o $(PROG_NAME) -lm
 
 
 $(OBJ_DIR)/$(NAPOLEON_DIR)/%.o: $(SRC_DIR)/$(NAPOLEON_DIR)/%.c $(OBJ_DIR) 
