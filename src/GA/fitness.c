@@ -19,22 +19,16 @@
  *              and power required for that schedule as a fitness function
  ******************************************************************************/
 
-#include "config.h"
-#include "fitness.h"
-#include "ecodes.h"
-#include "functions.h"
-#include "napoleon.h"
-#include "io.h"
-#include "types.h"
-#include "offlineScheduler.h"
-
-#include "rcsSimulator.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
 
+#include "fitness.h"
+#include "config.h"
+
+#include "offlineScheduler.h"
+#include "rcsSimulator.h"
 
 // FIX 
 static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
@@ -267,89 +261,29 @@ static int getConfigPower(int);
 static int getExecPower(int);
 
 
-// FIX - MAKE NON GLOBAL!!!
-t_task_interface *task_interface; //
-t_task *task; //
-int * succ_adj_mat;
-int * reuse_mat;
-
-// FIX - make smaller
-// FIX - add error checking
-bool initNapoleon(char * aif_filename){
-    FILE *aif_strm;
-    int err;
-    int i;
-
-    //allocate memory for the tasks and the task interfaces
-    task = (t_task*)malloc(sizeof (t_task) * __NUM_MAX_TASKS);
-    for(i = 0; i < __NUM_MAX_TASKS; i++){
-        (task + i)->type = 0;
-        (task + i)->exec_sched = 0;
-        (task + i)->reconfig_sched = 0;
-        (task + i)->leftmost_column = 0;
-        (task + i)->bottommost_row = 0;
-        (task + i)->latency = 0;
-        (task + i)->columns = 0;
-        (task + i)->width = 0;
-        (task + i)->input1 = 0;
-        (task + i)->input2 = 0;
-        (task + i)->output = 0;
-        (task + i)->impl = 0;
-        (task + i)->reconfig_pwr = 0;
-        (task + i)->exec_pwr = 0;
-    }
-
-    task_interface = (t_task_interface*)malloc(sizeof (t_task_interface) * __NUM_MAX_TASK_INTFC);
-    for(i = 0; i < __NUM_MAX_TASK_INTFC; i++){
-        (task_interface + i)->mode = 0;
-        (task_interface + i)->width = 0;
-        (task_interface + i)->reg_out = 0;
-    }
-
-    aif_strm = fopen(aif_filename, "r");
-    if(aif_strm == NULL)
+bool initScheduler(char * aif_filename){
+    // FIX - all rcScheduler's stuff
+    InitSimulator();
+    
+    // FIX - all Napoleon's stuff
+    task = initNapoleon(aif_filename);
+    
+    if(task == NULL)
         return false;
-
-    err = parse_aif(aif_strm, task, task_interface);
-    fclose(aif_strm);
-
-    if(err != __NO_ERROR){
-        print_error(err);    //and exit on unsuccessful execution of the parse_aif function
-        return false;
-    }
-
-    //allocate memory for the successor graph adjacency matrix
-    succ_adj_mat = (int*)malloc(sizeof (int)*(task->width + 2)*(task->width + 2));
-
-    //create the successor matrix
-    if((err = create_graph(task, task_interface, succ_adj_mat))){
-        print_error(err);
-        return false;
-    }
-
-    //allocate memory for the reuse matrix
-    reuse_mat = (int*)malloc(sizeof (int)*(task->width + 2)*(task->width + 2));
-
-    //create the reuse matrix
-    if((err = create_reuse_mat(task, reuse_mat))){
-        print_error(err);
-        return false;
-    }
     
     return true;
 }
 
 
-void freeNapoleon(void){
-    free(reuse_mat);
-    free(succ_adj_mat);
-    
-    free(task_interface);
+void freeScheduler(void){
+    // FIX - all rcScheduler's stuff
+    CleanSimulator();
+    // FIX - Napoleon's stuff
     free(task);
 }
 
-// FUTURE - consider passing in an integer array and returning one value as
-//          fitness (return int, take integer array)
+//// FUTURE - consider passing in an integer array and returning one value as
+////          fitness (return int, take integer array)
 //void evaluateFitness(Individual * ind){
 //    struct SimData input;
 //    struct SimResults output;
@@ -366,7 +300,7 @@ void freeNapoleon(void){
 //	output.noHWBusyCounter = 0;
 //
 //    //initialize the input
-//    input.dFGID = 7;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
+//    input.dFGID = 4;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
 //    input.noPRR = 5;    // FIXME - make a variable
 //    input.noGPP = 0;    // FIX - make a variable
 //    input.noOfNodes = getNumGenes();
@@ -384,7 +318,7 @@ void freeNapoleon(void){
 //}
 
 // FIX - add error checkingThis has
-void evaluateFitness(t_task * task, Individual * ind){
+void evaluateFitness(Individual * ind){
     GA_Info schedule;
     int i = 0;
 

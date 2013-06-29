@@ -106,7 +106,7 @@ typedef struct{
  * RETURNS : true if Napoleon was successfully initialized
  *           false if anything has gone wrong (error message printed to stderr)
  *****************************************************************************/
-bool initNapoleon(char *);
+bool initScheduler(char *);
 
 // FIX
 /******************************************************************************
@@ -116,7 +116,7 @@ bool initNapoleon(char *);
  * PRECONDITION : This function should only be called if initNapoleon() 
  *                  returned true.
  *****************************************************************************/
-void freeNapoleon(void);
+void freeScheduler(void);
 
 /******************************************************************************
  * NAME : evaluateFitness
@@ -124,7 +124,7 @@ void freeNapoleon(void);
  * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
  * ARGUMENTS : Individual * = the possible solution to be evaluated
  *****************************************************************************/
-void evaluateFitness(t_task * task, Individual *);
+void evaluateFitness(Individual *);
 
 /******************************************************************************
  * NAME : getNumGenes

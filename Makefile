@@ -33,8 +33,9 @@ EXE_FLAGS		= -DEXE -O2
 # FIX
 FINAL_ONLY 		= -O2
 
-C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA 
-L_INCLUDES		= -L/home/jennifer/work/rcSimulator/Release -lrcsSimulator -p
+C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA -Ilibs
+L_INCLUDES		= -L/home/jennifer/work/OfflineScheduler/libs -lrcsSimulator -lm -p
+
 
 #directory names
 SRC_DIR			= src
@@ -49,11 +50,11 @@ OBJS			= $(addprefix $(OBJ_DIR)/, \
                           $(NAPOLEON_DIR)/io.o \
                           $(NAPOLEON_DIR)/ilp.o \
                           $(NAPOLEON_DIR)/napoleon.o \
-                          $(NAPOLEON_DIR)/main.o \
 			  $(NAPOLEON_DIR)/offlineScheduler.o \
                           \
                           $(GA_DIR)/fitness.o \
                           $(GA_DIR)/individual.o \
+			  $(GA_DIR)/main.o \
                           $(GA_DIR)/population.o \
                           $(GA_DIR)/replacement.o \
                           $(GA_DIR)/selection.o \
@@ -99,7 +100,7 @@ final   : $(PROG_NAME)
 ###############################################################################
 
 $(PROG_NAME) : $(OBJS)
-	$(CC) $(L_INCLUDES) $(OBJS) -o $(PROG_NAME) -lm
+	$(CC) $(OBJS) -o $(PROG_NAME) $(L_INCLUDES) 
 
 
 $(OBJ_DIR)/$(NAPOLEON_DIR)/%.o: $(SRC_DIR)/$(NAPOLEON_DIR)/%.c $(OBJ_DIR) 
