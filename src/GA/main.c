@@ -239,6 +239,8 @@ void initParameters(int argc, char ** argv){
         fprintf(stdout, "\tReplacement Algorithm = Replace All\n\n");
     else
         fprintf(stdout, "\tReplacement Algorithm = Keep Best\n\n");
+    
+    fprintf(stdout, "\tSeeding Ratio = %.4lf\n\n", (1.0 - PERCENT_POP_RANDOM));
 }
 
 

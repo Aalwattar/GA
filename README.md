@@ -92,6 +92,12 @@ The Mutation rate should be a decimal number between 0 and 1
 The Population size should be a number between 2 and 10000
 The number of generations should be greater than 1
 
+** FIX!! **
+The percentage of individuals that are seeded in each generation is a number
+that is fixed in config.h. In order to change the percentage of individuals
+that are random, you must manually change the value in config.h. 
+(no command line arguments exist at the moment)
+- This values is currently set to 75% random (= 25% of population is seeded)
 
 ARCHITECTURE FILE FORMAT
 --------------------------------------------------------------------------------
