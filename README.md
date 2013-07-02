@@ -67,7 +67,7 @@ Default Values
 - DFG = input/B1_10_5.aif
 
 - Crossover rate = 0.85
-- Crossover Algorithm = one point crossover
+- Crossover Algorithm = two point crossover
 - Mutation rate = 0.005
 - Mutation Algorithm = rotational mutation
 

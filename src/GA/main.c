@@ -33,7 +33,7 @@ static int POP_SIZE = 0;
 static t_task * task; 
 
 // FIX 
-int crossover_type = 1;
+int crossover_type = 2;
 int mutation_type = 1;
 int replacement_type = 1;
 int selection_type = 1;
@@ -112,13 +112,13 @@ void initParameters(int argc, char ** argv){
                 arch_filename = optarg;
                 break;
             case 'b':
-                if(strncasecmp("two-point", optarg, strlen(optarg))  == 0 || 
-                    strncasecmp("two_point", optarg, strlen(optarg)) == 0 ||
-                    strncasecmp("two point", optarg, strlen(optarg)) == 0 )
-                    crossover_type = 2;
-                else if(strncasecmp("one-point", optarg, strlen(optarg)) != 0 &&
-                        strncasecmp("one_point", optarg, strlen(optarg)) != 0 &&
-                        strncasecmp("one point", optarg, strlen(optarg)) != 0 ){
+                if(strncasecmp("one-point", optarg, strlen(optarg))  == 0 || 
+                    strncasecmp("one_point", optarg, strlen(optarg)) == 0 ||
+                    strncasecmp("one point", optarg, strlen(optarg)) == 0 )
+                    crossover_type = 1;
+                else if(strncasecmp("two-point", optarg, strlen(optarg)) != 0 &&
+                        strncasecmp("two_point", optarg, strlen(optarg)) != 0 &&
+                        strncasecmp("two point", optarg, strlen(optarg)) != 0 ){
                     fprintf(stderr, "Unknown crossover option : %s\n", optarg);
                     exit(1);
                 }
@@ -173,7 +173,7 @@ void initParameters(int argc, char ** argv){
             case 'V':
             case 'v':
                 // FIX - make it print out the build as well! (#if (defined EXE) printf....)
-                fprintf(stdout, "Offline Scheduler version X.0.0  (Compare the runtimes and results of Napoleon and the Online scheduler on the same chromosome)\n");
+                fprintf(stdout, "Offline Scheduler version 1.4.0  (Offline Scheduler + Napoleon)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
                 exit(0);
                 
