@@ -1,5 +1,22 @@
 #!/bin/bash
 
+####################################################################################################
+# USAGE:
+#   place the full names (path + directory name) of all directories that you want to plot on the 
+#   same graph inside a file by using a combination of 
+#
+#   1) find -iname "XXXX*" where XXXX is the name of the directory, and * represents repitions of
+#	that type of test (eg. mutation_tests_2, mutation_tests_3 ... etc.)
+#   2) grep -v "STUFF-YOU-DON'T-WANT-IN-YOUR-DIRECTORY-NAMES" 
+#
+#   Through the usage of the above two commands + redirecting the output into a file you can create
+#   a file that contains a list of all the directories that you wish to graph together. 
+#
+# RUNNING:
+#   type "bash generational_graph.sh <textfileName>"
+#
+####################################################################################################
+
 if [ -z "$1" ] ; then 
     echo "Incorrect usage of $0."
     echo "Enter the file that contains the directories that you want to graph as the first command line argument"
@@ -88,7 +105,6 @@ mkdir eps
 mkdir pictures
 
 
-# FIX!!!
 gnuplot << INSTRUCTIONS
     filenames = "B2_25.avg B1_50.avg B2_100.avg B1_150.avg"
     ideal_25 = 480

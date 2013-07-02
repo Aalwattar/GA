@@ -1,6 +1,23 @@
 #!/bin/bash
 
-# run this file with the directory large_pop_tests
+####################################################################################################
+# USAGE:
+#   place the full names (path + directory name) of all directories that you want to plot on the 
+#   same graph inside a file by using a combination of 
+#
+#   1) find -iname "XXXX*" where XXXX is the name of the directory, and * represents repitions of
+#	that type of test (eg. mutation_tests_2, mutation_tests_3 ... etc.)
+#   2) grep -v "STUFF-YOU-DON'T-WANT-IN-YOUR-DIRECTORY-NAMES" 
+#
+#   Through the usage of the above two commands + redirecting the output into a file you can create
+#   a file that contains a list of all the directories that you wish to graph together. 
+#
+# RUNNING:
+#   type "bash generational_graph.sh <textfileName>"
+#
+####################################################################################################
+
+#PLEASE DON'T CHANGE!
 CROSS_RATE=0.90
 
 if [ -z "$1" ] ; then 
@@ -12,6 +29,7 @@ fi
 rm -fr .toGraph
 mkdir .toGraph
 
+# translate the GA's output into gnuplot's formats
 for dir in $(cat "$1") ; do
     BENCHMARKS=$(ls "$dir")
     
