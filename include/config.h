@@ -21,8 +21,8 @@
 
 
 // locations of input files
-#define DEFAULT_ARCH_FILENAME "input/architecture_library.txt"
-#define DEFAULT_AIF_FILENAME  "input/B1_10_5.aif"
+#define DEFAULT_ARCH_FILENAME "input/arch.conf"
+#define DEFAULT_AIF_FILENAME  "input/dfg.conf"
 
 
 // FIX - normalize power + runtime to make them 75:25 instead

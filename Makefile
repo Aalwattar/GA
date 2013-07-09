@@ -1,67 +1,67 @@
 ###############################################################################
 # 	Makefile
 #
-# An off-line Task Scheduler for FPGA
+# A genetic algorithm for the optimization of task scheduling
 # 
-# AUTHOR : Ziad Abuowaimer & Jennifer Winer
+# AUTHOR : Jennifer Winer
 #
 # CREATED : May 21, 2013
-# LAST MODIFIED : June 6, 2013
+# LAST MODIFIED : July 3, 2013
 ###############################################################################
 
 ###############################################################################
 ##
 ## Description:
-## This makefile builds the Off-Line Scheduler
+## This makefile builds the Genetic Algorithm
 ##
 ## targets:
-##	1. <default>    : compile incrementally and link
-##	2. rebuild	: compile all and link
+##  1. <default>    : compile incrementally and link (no optimization)
+##			print only a summary of each generation
 ##
-##	Set DEBUG="-g -D__DEBUG" to compile the source files for debugging
-##	and enable the test jigs in the code.
+##  2. debug	    : no optimization, enable profiling and valgrind options.
+##			enable debug printing functions in the code
+##
+##  3. verbose	    : optimization level 2
+##			enable extra printing from within the GA
+##
+##  4. exe	    : optimization level 2
+##			print only the final generation.
+##
+##		    # FIX - LIST THE EXACT THINGS THAT ARE PRINTED
 ##
 ###############################################################################
 
 #compiler options
-CC 			= gcc
-C_FLAGS 		= -std=gnu99 -Wall -pedantic
+CC		= gcc
+C_FLAGS 	= -std=gnu99 -Wall -pedantic
 
-DEBUG_FLAGS		= -DDEBUG -g -p -O0
-VERBOSE_FLAGS		= -DVERBOSE -O2
-EXE_FLAGS		= -DEXE -O2 
-# FIX
-FINAL_ONLY 		= -O2
+DEBUG_FLAGS	= -DDEBUG -g -p -O0
+VERBOSE_FLAGS	= -DVERBOSE -O2
+EXE_FLAGS	= -DEXE -O2 
 
-C_INCLUDES   		= -Iinclude/Napoleon -Iinclude/GA -Ilibs
-L_INCLUDES		= -L/home/jennifer/work/OfflineScheduler/libs -lrcsSimulator -lm -p
+C_INCLUDES   	= -Iinclude -Ilibs
+# FIX - change the following line to be a relative path?
+L_INCLUDES	= -L/home/jennifer/work/GeneticAlgorithm/libs -lrcsSimulator \
+		  -lcommonInterfaces -lconfuse -lm -p -lofflineScheduler
 
 
 #directory names
-SRC_DIR			= src
-OBJ_DIR			= obj
-BIN_DIR			= .
-
-NAPOLEON_DIR		= Napoleon
-GA_DIR			= GA
-
-OBJS			= $(addprefix $(OBJ_DIR)/, \
-                          $(NAPOLEON_DIR)/functions.o \
-                          $(NAPOLEON_DIR)/io.o \
-                          $(NAPOLEON_DIR)/ilp.o \
-                          $(NAPOLEON_DIR)/napoleon.o \
-			  $(NAPOLEON_DIR)/offlineScheduler.o \
-                          \
-                          $(GA_DIR)/fitness.o \
-                          $(GA_DIR)/individual.o \
-			  $(GA_DIR)/main.o \
-                          $(GA_DIR)/population.o \
-                          $(GA_DIR)/replacement.o \
-                          $(GA_DIR)/selection.o \
-			  $(GA_DIR)/util.o)
+SRC_DIR		= src
+OBJ_DIR		= obj
+BIN_DIR		= .
 
 
-PROG_NAME		= OfflineScheduler.exe
+OBJS		= $(addprefix $(OBJ_DIR)/, \
+			fitness.o \
+			individual.o \
+			main.o \
+			population.o \
+			replacement.o \
+			selection.o \
+			util.o)
+
+
+PROG_NAME	= Genetic_Algorithm.exe
 
 ###############################################################################
 #      compilation, linking and debugging targets
@@ -73,11 +73,10 @@ all : $(PROG_NAME)
 	
 clean : 
 	rm -f $(BIN_DIR)/$(PROG_NAME)
-	rm -f $(OBJ_DIR)/$(NAPOLEON_DIR)/*
-	rm -f $(OBJ_DIR)/$(GA_DIR)/*
+	rm -f $(OBJ_DIR)/*
 
 run: 
-	./$(PROG_NAME)
+	./$(PROG_NAME) -a input/arch.conf -d input/dfg.conf
 	
 ###############################################################################
 
@@ -93,23 +92,13 @@ verbose : $(PROG_NAME)
 exe     : C_FLAGS += $(EXE_FLAGS)
 exe     : $(PROG_NAME)
 
-# FIX
-final   : C_FLAGS += $(FINAL_ONLY)
-final   : $(PROG_NAME)
-
 ###############################################################################
 
 $(PROG_NAME) : $(OBJS)
 	$(CC) $(OBJS) -o $(PROG_NAME) $(L_INCLUDES) 
-
-
-$(OBJ_DIR)/$(NAPOLEON_DIR)/%.o: $(SRC_DIR)/$(NAPOLEON_DIR)/%.c $(OBJ_DIR) 
-	$(CC) $(C_INCLUDES) $(C_FLAGS) -c $< -o $@
 	
-$(OBJ_DIR)/$(GA_DIR)/%.o: $(SRC_DIR)/$(GA_DIR)/%.c $(OBJ_DIR) 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(OBJ_DIR) 
 	$(CC) $(C_INCLUDES) $(C_FLAGS) -c $< -o $@
     
 $(OBJ_DIR) : 
 	mkdir -p $(OBJ_DIR)
-	mkdir -p $(OBJ_DIR)/GA
-	mkdir -p $(OBJ_DIR)/Napoleon

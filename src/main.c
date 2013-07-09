@@ -14,10 +14,6 @@
  * 
  * Purpose  : Contains main and executes the GA
  ******************************************************************************/
-#include "config.h"
-#include "fitness.h"
-#include "selection.h"
-#include "replacement.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,10 +23,14 @@
 #include <getopt.h>
 #include <sys/time.h>
 
+#include "config.h"
+#include "fitness.h"
+#include "selection.h"
+#include "replacement.h"
+
 // FIX
 static int STOP_CONDITION = 150;
 static int POP_SIZE = 0;
-static t_task * task; 
 
 // FIX 
 int crossover_type = 2;
@@ -43,11 +43,10 @@ void initParameters(int, char **);
 void freeParameters(void);
 void setPopSize(int);
 
-// FUTURE - implement this
+// FIX - implement this
 bool populationConverged(Population * pop);
 
-/* REGULAR MAIN */
-// a generational keep-best approach
+
 int main(int argc, char * argv[]){
     Population * pop, * selected;
     Individual * best_solution;
@@ -100,7 +99,7 @@ int main(int argc, char * argv[]){
 // FIX - print out every parameter selected
 void initParameters(int argc, char ** argv){
     char * arch_filename = DEFAULT_ARCH_FILENAME;
-    char * aif_filename = DEFAULT_AIF_FILENAME;
+    char * dfg_filename = DEFAULT_AIF_FILENAME;
     int seed = randSeed();
     int c;
 
@@ -127,7 +126,7 @@ void initParameters(int argc, char ** argv){
                 setCrossoverRate(atof(optarg));
                 break;
             case 'd':
-                aif_filename = optarg;
+                dfg_filename = optarg;
                 break;
             case 'g':
                 STOP_CONDITION = atoi(optarg);
@@ -173,8 +172,8 @@ void initParameters(int argc, char ** argv){
             case 'V':
             case 'v':
                 // FIX - make it print out the build as well! (#if (defined EXE) printf....)
-                fprintf(stdout, "Offline Scheduler version 1.4.0  (Offline Scheduler + Napoleon)\n");
-                fprintf(stdout, "Please see https://github.com/Aalwattar/OfflineScheduler for more information\n");
+                fprintf(stdout, "Offline Scheduler version 1.5.0  (GA + Napoleon)\n");
+                fprintf(stdout, "Please see https://github.com/Aalwattar/GA for more information\n");
                 exit(0);
                 
             case 'w':
@@ -200,15 +199,13 @@ void initParameters(int argc, char ** argv){
     // FIX - Check the return value
     seedRandGenerator(seed);
     
-    if(initArchLibrary(arch_filename) != true)
-        exit(1);
-    
-//    // FIX
-    initScheduler(aif_filename);
+    // FIX
+    initScheduler(arch_filename, dfg_filename);
 
     
     if(POP_SIZE == 0){
         POP_SIZE = getNumGenes();
+        fprintf(stdout, "There are %d genes\n", getNumGenes());
     }
     
     fprintf(stdout, "Parameters:\n");
@@ -245,7 +242,6 @@ void initParameters(int argc, char ** argv){
 
 
 void freeParameters(void){
-    freeArchLibrary();
     freeScheduler();
 }
 

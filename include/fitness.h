@@ -21,49 +21,10 @@
 
 #include <stdbool.h>
 #include "individual.h"
-#include "types.h"
 
 /******************************************************************************
  *****************           ARCHITECTURE FILE I/O            *****************
  *****************************************************************************/
-
-/******************************************************************************
- * NAME : initArchLibrary
- * 
- * PURPOSE : Imports the architecture information from a file
- * ARGUMENTS : char * = name of the file containing the architecture data
- * 
- * RETURNS : false if the filename could not be found or opened or the file did 
- *              not follow the specified format
- *           true otherwise (successful completion)
- * 
- * NOTE : please see the README file for more information about the format
- *              and contents of the architecture information file
- *****************************************************************************/
-bool initArchLibrary(char *);
-
-/******************************************************************************
- * NAME : freePerformanceInfo
- * 
- * PURPOSE : Frees all dynamically allocated memory used to store the 
- *              problem's architecture information
- * 
- * PRECONDITIONS : This function should only be called if initArchLibrary()
- *                  returned true
- *****************************************************************************/
-void freeArchLibrary(void);
-
-/******************************************************************************
- * NAME : printArchLibrary
- * 
- * PURPOSE : print the library of architectures
- * 
- * PRECONDITIONS : the architecture library MUST have been previously  
- *                      initialized by initProblem()
- * 
- * NOTE : this function exists for testing and debugging purposes only.
- *****************************************************************************/
-void printArchLibrary(void);
 
 /******************************************************************************
  * NAME : getNumArch
@@ -84,17 +45,10 @@ int getNumArch(int);
 
 /******************************************************************************
  *****************        FITNESS FUNCTION (NAPOLEON)         *****************
- *****************************************************************************/
+ *****************************************************************************/        
 
-// A struct for returning the information relevant to the fitness of a 
-//   schedule from Napoleon back to the Genetic Algorithm
-typedef struct{
-    int power;    // the power required to execute the schedule
-    int runtime;  // the total runtime of the schedule
-    int prefetch;
-    int reuse;
-}GA_Info;         
 
+// FIX - all comments bellow this line are wrong
 /******************************************************************************
  * NAME : initNapoleon
  * 
@@ -106,7 +60,7 @@ typedef struct{
  * RETURNS : true if Napoleon was successfully initialized
  *           false if anything has gone wrong (error message printed to stderr)
  *****************************************************************************/
-bool initScheduler(char *);
+bool initScheduler(char *, char *);
 
 // FIX
 /******************************************************************************
@@ -125,6 +79,8 @@ void freeScheduler(void);
  * ARGUMENTS : Individual * = the possible solution to be evaluated
  *****************************************************************************/
 void evaluateFitness(Individual *);
+
+
 
 /******************************************************************************
  * NAME : getNumGenes
@@ -174,8 +130,6 @@ void setRuntimeWeight(double);
  *****************************************************************************/
 double getRuntimeWeight(void);
 
-// FIX
-void evaluateFitnessNapoleon(Individual * ind);
 
 #endif	/* FITNESS_H */
 

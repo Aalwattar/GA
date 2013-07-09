@@ -26,6 +26,7 @@ struct SimResults {
 	unsigned int noOfSWTasks;
 	unsigned int noSWBusyCounter;
 	unsigned int noHWBusyCounter;
+        unsigned int power;
 };
 
 
