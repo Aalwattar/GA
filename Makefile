@@ -76,7 +76,7 @@ clean :
 	rm -f $(OBJ_DIR)/*
 
 run: 
-	./$(PROG_NAME) -a input/arch.conf -d input/dfg.conf
+	./$(PROG_NAME) 
 	
 ###############################################################################
 

@@ -22,7 +22,7 @@
 
 // locations of input files
 #define DEFAULT_ARCH_FILENAME "input/arch.conf"
-#define DEFAULT_DFG_FILENAME  "input/dfg.conf"
+#define DEFAULT_DFG_FILENAME  "input/B1_10_5.conf"
 #define DEFAULT_PRR_FILENAME  "input/prr.conf"
 
 
