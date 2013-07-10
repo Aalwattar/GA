@@ -6,18 +6,17 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : May 29, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
- * Filename : problem.c
+ * Filename : util.c
  * 
  * Purpose  : library for utility functions such as random number generation
  ******************************************************************************/
 
 #include "util.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>

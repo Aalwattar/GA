@@ -6,13 +6,13 @@
  *                  for each task's operation
  * 
  * Created  : June 17, 2013
- * Modified : June 24, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
  * Filename : config.h
  * 
- * Purpose  : a configuration file (to contain all defines)
+ * Purpose  : a configuration file (to contain all unchanging information)
  ******************************************************************************/
 
 
@@ -22,16 +22,13 @@
 
 // locations of input files
 #define DEFAULT_ARCH_FILENAME "input/arch.conf"
-#define DEFAULT_AIF_FILENAME  "input/dfg.conf"
+#define DEFAULT_DFG_FILENAME  "input/dfg.conf"
+#define DEFAULT_PRR_FILENAME  "input/prr.conf"
 
 
 // FIX - normalize power + runtime to make them 75:25 instead
 // Fitness weights
 #define DEFAULT_RUNTIME_WEIGHT 0.875
-
-
-// Population Parameters
-//#define DEFAULT_POP_SIZE 50
 
 // Genetic operator rates
 #define DEFAULT_CROSSOVER_RATE 0.85
@@ -45,7 +42,6 @@
 #define MAX_NUM_GENES 500
 #define PERCENT_POP_RANDOM 0.75
 #define ACCEPTABLE_DEVIATION_ERROR 0
-
 
 #endif	/* CONFIG_H */
 

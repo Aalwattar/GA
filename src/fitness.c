@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 24, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -41,6 +41,7 @@ static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
 
 static Architecture_Library arch_library;
 static DFG dfg;
+static Hardware hardware;
 
 
 /******************************************************************************
@@ -72,11 +73,14 @@ double getRuntimeWeight(void){
 }
 
 
-bool initScheduler(char * arch_filename, char * dfg_filename){
+bool initScheduler(char * arch_filename, char * dfg_filename, char * prr_filename){
     if(initArchLibrary(arch_filename, &arch_library) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
     if(initDFG(dfg_filename, &dfg) != EXIT_SUCCESS)
+        exit(EXIT_FAILURE);
+    
+    if(initHardwareLibrary(prr_filename, &hardware) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
     
@@ -103,8 +107,14 @@ void freeScheduler(void){
     // FIX - Napoleon's stuff
     freeNapoleon();
     
+    freeHardwareLibrary(&hardware);
     freeArchLibrary(&arch_library);
     freeDFG(&dfg);
+    // FIX - Needs a header comment
+
+// FIX - Needs a header comment
+    
+
 }
 
 //// FUTURE - consider passing in an integer array and returning one value as

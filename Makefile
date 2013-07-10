@@ -42,7 +42,7 @@ EXE_FLAGS	= -DEXE -O2
 C_INCLUDES   	= -Iinclude -Ilibs
 # FIX - change the following line to be a relative path?
 L_INCLUDES	= -L/home/jennifer/work/GeneticAlgorithm/libs -lrcsSimulator \
-		  -lcommonInterfaces -lconfuse -lm -p -lofflineScheduler
+		  -lcommonInterfaces -lconfuse -lm  -lofflineScheduler
 
 
 #directory names

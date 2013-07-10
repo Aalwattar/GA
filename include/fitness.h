@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 23, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -60,7 +60,7 @@ int getNumArch(int);
  * RETURNS : true if Napoleon was successfully initialized
  *           false if anything has gone wrong (error message printed to stderr)
  *****************************************************************************/
-bool initScheduler(char *, char *);
+bool initScheduler(char *, char *, char *);
 
 // FIX
 /******************************************************************************

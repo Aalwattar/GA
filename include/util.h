@@ -6,13 +6,13 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : May 29, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
- * Filename : problem.h
+ * Filename : util.h
  * 
- * Purpose  : a header for problem.c
+ * Purpose  : a header for util.c
  ******************************************************************************/
 
 #ifndef PROBLEM_H

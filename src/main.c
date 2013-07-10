@@ -99,7 +99,8 @@ int main(int argc, char * argv[]){
 // FIX - print out every parameter selected
 void initParameters(int argc, char ** argv){
     char * arch_filename = DEFAULT_ARCH_FILENAME;
-    char * dfg_filename = DEFAULT_AIF_FILENAME;
+    char * dfg_filename = DEFAULT_DFG_FILENAME;
+    char * prr_filename = DEFAULT_PRR_FILENAME;
     int seed = randSeed();
     int c;
 
@@ -200,7 +201,7 @@ void initParameters(int argc, char ** argv){
     seedRandGenerator(seed);
     
     // FIX
-    initScheduler(arch_filename, dfg_filename);
+    initScheduler(arch_filename, dfg_filename, prr_filename);
 
     
     if(POP_SIZE == 0){
