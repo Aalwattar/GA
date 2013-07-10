@@ -172,7 +172,7 @@ void initParameters(int argc, char ** argv){
             case 'V':
             case 'v':
                 // FIX - make it print out the build as well! (#if (defined EXE) printf....)
-                fprintf(stdout, "Offline Scheduler version 1.5.0  (GA + Napoleon)\n");
+                fprintf(stdout, "Offline Scheduler version 1.5.1  (GA + Napoleon)\n");
                 fprintf(stdout, "Please see https://github.com/Aalwattar/GA for more information\n");
                 exit(0);
                 

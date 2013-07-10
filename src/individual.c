@@ -32,10 +32,7 @@ void initRandIndividual(Individual * ind){
     ind->encoding = malloc(sizeof(int) * getNumGenes());
         
     for(i=0; i<getNumGenes(); i++)
-        ind->encoding[i] = (getNumArch(getTaskType(i)) - 1) * randomNumber() + 1;
-    
-    // RESTRICTION - right now I restrict the GA from choosing any of the GPPs
-    // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
+        ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }
 
 // FIX - get rid of MAX_NUM_GENES
@@ -45,14 +42,13 @@ void initSeededIndividual(Individual * ind){
 
 	ind->encoding = malloc(sizeof(int) * getNumGenes());
 
+    // FIX - the logic right here should be able to be shortened from 4 lines to three. or two.
 	for (i=0; i < getNumGenes(); i++){
 		if (alleleTracker[i] == getNumArch(getTaskType(i)) - 1){
 			alleleTracker[i] = 0;
 		}
 
-		ind->encoding[i] = ++(alleleTracker[i]);
-        // RESTRICTION - right now I restrict the GA from choosing any of the GPPs (AKA - the encoding of the individual cannot be zero)
-        // ORIGINAL - ind->encoding[i] = k[i]++;
+		ind->encoding[i] = (alleleTracker[i])++;
 	}
 }
 
@@ -81,12 +77,8 @@ void mutateRotationally(Individual * ind){
     
     for(i=0; i<getNumGenes(); i++)
         if(randomNumber() < getMutationRate()){
-            ind->encoding[i] = ((ind->encoding[i]) % (getNumArch(getTaskType(i)) - 1)) + 1;
+            ind->encoding[i] = (ind->encoding[i] + 1) % getNumArch(getTaskType(i));
         }
-    
-    
-    // RESTRICTION - right now I restrict the GA from choosing any of the GPPs
-    // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }              
 
 void mutateRandomly(Individual * ind){
@@ -95,17 +87,13 @@ void mutateRandomly(Individual * ind){
     
     for(i=0; i<getNumGenes(); i++)
         if(randomNumber() < getMutationRate()){
-            new_gene = (getNumArch(getTaskType(i)) - 1) * randomNumber() + 1;
+            new_gene = getNumArch(getTaskType(i)) * randomNumber();
             
             while(new_gene == ind->encoding[i])
-                new_gene = (getNumArch(getTaskType(i)) - 1) * randomNumber() + 1;
+                new_gene = getNumArch(getTaskType(i)) * randomNumber();
                 
             ind->encoding[i] = new_gene;
         }
-    
-    
-    // RESTRICTION - right now I restrict the GA from choosing any of the GPPs
-    // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }  
 
 void onePointCrossover(Individual * p1, Individual * p2){
@@ -154,7 +142,7 @@ void printIndividual(Individual * ind){
     
     // print the chromosome
     for (i = 0; i < getNumGenes(); i++)
-        fprintf(stdout, "%d", ind->encoding[i]);
+        fprintf(stdout, "%d", ind->encoding[i] + 1);
     
     // Napoleon information
     fprintf(stdout, "\tfitness = %d\truntime = %d\tprefetch = %d\tpower = %d\treuse = %d\n", 
