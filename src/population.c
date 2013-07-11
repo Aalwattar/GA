@@ -23,6 +23,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <strings.h>
 #include <math.h>
 #include <limits.h>
 
@@ -30,6 +32,7 @@
 // FIX
 static double CROSSOVER_RATE = DEFAULT_CROSSOVER_RATE;
 static double MUTATION_RATE  = DEFAULT_MUTATION_RATE;
+static int OFFLINE_SCHEDULER = 1;
 
 
 Population * genRandPopulation(int pop_size){
@@ -82,13 +85,33 @@ void freePopulation(Population * pop){
 }
 
 
-
 void determineFitness(Population * pop){
     int i;
     
     // FIX 
-    for (i = 0; i < pop->size; i++)
-        evaluateOnlineFitness(&(pop->member[i]));
+    for (i = 0; i < pop->size; i++){
+        if(OFFLINE_SCHEDULER)
+            evaluateOfflineFitness(&(pop->member[i]));
+        else
+            evaluateOnlineFitness(&(pop->member[i]));
+    }
+}
+
+int setFitnessFunction(char * input){
+    if(strncasecmp("onlineSchdeuler", input, strlen(input))  == 0 || 
+        strncasecmp("Online Schdeuler", input, strlen(input)) == 0 ||
+        strncasecmp("rcScheduler", input, strlen(input)) == 0 ||
+        strncasecmp("rcSimulator", input, strlen(input)) == 0 )
+        OFFLINE_SCHEDULER = 0;
+    else if(strncasecmp("offlineScheduler", input, strlen(input)) != 0 &&
+            strncasecmp("offline Scheduler", input, strlen(input)) != 0 &&
+            strncasecmp("Napoleon", input, strlen(input)) != 0){
+        fprintf(stderr, "Unknown crossover option : %s\n", input);
+        exit(1);
+    }
+    
+    // FIX
+    return 1;
 }
 
 void printPopDiversity(Population * pop) {

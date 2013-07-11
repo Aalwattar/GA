@@ -92,6 +92,7 @@ void evolvePopulation(Population *, int, int);
 void determineFitness(Population *);
 
 
+int setFitnessFunction(char * input);
 
 /******************************************************************************
  * NAME : evaluateRanks

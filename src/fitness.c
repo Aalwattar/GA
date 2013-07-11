@@ -128,14 +128,14 @@ void evaluateOnlineFitness(Individual * ind){
 	output.noHWBusyCounter = 0;
 
     //initialize the input
-    input.dFGID = 0;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
-    input.noPRR = 5;    // FIXME - make a variable
-    input.noGPP = 0;    // FIX - make a variable
+    input.dFGID = 0;    // FIX - NO LONGER IN USE
+    input.noPRR = 5;    // FIX - NO LONGER IN USE
+    input.noGPP = 0;    // FIX - NO LONGER IN USE
+    
     input.noOfNodes = getNumGenes();
     for(i=0; i<input.noOfNodes; i++)
         input.typeData[i] = ind->encoding[i];// FIX - ASSUMES THAT HIS ARRAY STARTS AT 0
 
-    
 	RunSimulator(&input, &output);
     
     ind->fitness = output.totalTime;

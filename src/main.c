@@ -106,7 +106,7 @@ void initParameters(int argc, char ** argv){
 
     opterr = 0;
 
-    while((c = getopt(argc, argv, "a:b:c:d:g:m:n:p:r:s:t:Vvw:")) != -1){
+    while((c = getopt(argc, argv, "a:b:c:d:f:g:h:m:n:o:p:r:s:t:Vvw:")) != -1){
         switch(c){
             case 'a':
                 arch_filename = optarg;
@@ -129,8 +129,14 @@ void initParameters(int argc, char ** argv){
             case 'd':
                 dfg_filename = optarg;
                 break;
+            case 'f':
+                setFitnessFunction(optarg);
+                break;
             case 'g':
                 STOP_CONDITION = atoi(optarg);
+                break;
+            case 'h':
+                // CHOOSE THE HARDWARE # - ONLY APPLIES TO ONLINE SCHEDULER
                 break;
             case 'm':
                 setMutationRate(atof(optarg));
