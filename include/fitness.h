@@ -78,7 +78,15 @@ void freeScheduler(void);
  * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
  * ARGUMENTS : Individual * = the possible solution to be evaluated
  *****************************************************************************/
-void evaluateFitness(Individual *);
+void evaluateOfflineFitness(Individual *);
+
+/******************************************************************************
+ * NAME : evaluateFitness
+ * 
+ * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
+ * ARGUMENTS : Individual * = the possible solution to be evaluated
+ *****************************************************************************/
+void evaluateOnlineFitness(Individual *);
 
 
 

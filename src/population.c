@@ -86,8 +86,9 @@ void freePopulation(Population * pop){
 void determineFitness(Population * pop){
     int i;
     
+    // FIX 
     for (i = 0; i < pop->size; i++)
-        evaluateFitness(&(pop->member[i]));
+        evaluateOnlineFitness(&(pop->member[i]));
 }
 
 void printPopDiversity(Population * pop) {

@@ -38,9 +38,7 @@
 
 // FIX 
 static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
-
-static Architecture_Library arch_library;
-static DFG dfg;
+static Common_Interface library;
 static Hardware hardware;
 
 
@@ -49,7 +47,7 @@ static Hardware hardware;
  *****************************************************************************/
 
 int getNumArch(int task){
-    return arch_library.task[task].num_impl;
+    return library.archlib.task[task].num_impl;
 }
 
 /******************************************************************************
@@ -74,18 +72,20 @@ double getRuntimeWeight(void){
 
 
 bool initScheduler(char * arch_filename, char * dfg_filename, char * prr_filename){
-    if(initArchLibrary(arch_filename, &arch_library) != EXIT_SUCCESS)
+    if(initArchLibrary(arch_filename, &(library.archlib)) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
-    if(initDFG(dfg_filename, &dfg) != EXIT_SUCCESS)
+    if(initDFG(dfg_filename, &(library.dfg)) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
-    if(initHardwareLibrary(prr_filename, &hardware) != EXIT_SUCCESS)
+    if(initHardwareLibrary(prr_filename, &(hardware)) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
+    library.setup = hardware.setups[2];
     
     // FIX - all rcScheduler's stuff
-    InitSimulator();
+    InitSimulator(&library);
+
     
     // FIX - all Napoleon's stuff
     initNapoleon(arch_filename, dfg_filename);
@@ -108,60 +108,52 @@ void freeScheduler(void){
     freeNapoleon();
     
     freeHardwareLibrary(&hardware);
-    freeArchLibrary(&arch_library);
-    freeDFG(&dfg);
-    // FIX - Needs a header comment
-
-// FIX - Needs a header comment
-    
-
+    freeArchLibrary(&(library.archlib));
+    freeDFG(&(library.dfg));
 }
 
-//// FUTURE - consider passing in an integer array and returning one value as
-////          fitness (return int, take integer array)
-//void evaluateFitness(Individual * ind){
-//    struct SimData input;
-//    struct SimResults output;
-//    int i;
-//    
-//    // Zero the output
-//    output.totalTime = 0;
-//	output.noOfReuse = 0;
-//	output.noOfConfiguration = 0;
-//	output.noSW2HWMigration = 0;
-//	output.noHW2SWMigration = 0;
-//	output.noOfSWTasks = 0;
-//	output.noSWBusyCounter = 0;
-//	output.noHWBusyCounter = 0;
-//
-//    //initialize the input
-//    input.dFGID = 4;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
-//    input.noPRR = 5;    // FIXME - make a variable
-//    input.noGPP = 0;    // FIX - make a variable
-//    input.noOfNodes = getNumGenes();
-//    for(i=0; i<input.noOfNodes; i++)
-//        input.typeData[i] = ind->encoding[i];// FIX - ASSUMES THAT HIS ARRAY STARTS AT 0
-//
-//    
-//	RunSimulator(&input, &output);
-//    
-//    ind->fitness = output.totalTime;
-//    ind->energy = 0;    
-//    ind->exec_time = output.totalTime;
-//    ind->num_reuse = 0;
-//    ind->prefetch = 0;
-//}
+void evaluateOnlineFitness(Individual * ind){
+    struct SimData input;
+    struct SimResults output;
+    int i;
+    
+    // Zero the output
+    output.totalTime = 0;
+	output.noOfReuse = 0;
+	output.noOfConfiguration = 0;
+	output.noSW2HWMigration = 0;
+	output.noHW2SWMigration = 0;
+	output.noOfSWTasks = 0;
+	output.noSWBusyCounter = 0;
+	output.noHWBusyCounter = 0;
+
+    //initialize the input
+    input.dFGID = 0;    // IMPORTANT FIX - make this set from initParameters (currently B1_10_5.aif)
+    input.noPRR = 5;    // FIXME - make a variable
+    input.noGPP = 0;    // FIX - make a variable
+    input.noOfNodes = getNumGenes();
+    for(i=0; i<input.noOfNodes; i++)
+        input.typeData[i] = ind->encoding[i];// FIX - ASSUMES THAT HIS ARRAY STARTS AT 0
+
+    
+	RunSimulator(&input, &output);
+    
+    ind->fitness = output.totalTime;
+    ind->energy = 0;    
+    ind->exec_time = output.totalTime;
+    ind->num_reuse = 0;
+    ind->prefetch = 0;
+}
 
 // FIX - add error checkingThis has
-void evaluateFitness(Individual * ind){
+void evaluateOfflineFitness(Individual * ind){
     struct SimData input;
     struct SimResults output;
     int i;
 
     input.noOfNodes = getNumGenes();
-    for(i=0; i<input.noOfNodes; i++){
+    for(i=0; i<input.noOfNodes; i++)
         input.typeData[i] = ind->encoding[i];
-    }
     
     // FIX - check return value
     getSchedule(&input, &output);
@@ -176,10 +168,10 @@ void evaluateFitness(Individual * ind){
 
 int getTaskType(int task_num){
     // this function interfaces the GA's indices (which all start at 0) with Napoleon (starts at 1)
-    return dfg.node[task_num].task_type - 1;
+    return library.dfg.node[task_num].task_type - 1;
 }
 
 
 int getNumGenes(void){
-    return dfg.num_nodes;
+    return library.dfg.num_nodes;
 }
