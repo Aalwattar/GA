@@ -139,5 +139,8 @@ void setRuntimeWeight(double);
 double getRuntimeWeight(void);
 
 
+void setHardwareSetup(int index);
+
+
 #endif	/* FITNESS_H */
 

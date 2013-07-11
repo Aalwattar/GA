@@ -136,7 +136,7 @@ void initParameters(int argc, char ** argv){
                 STOP_CONDITION = atoi(optarg);
                 break;
             case 'h':
-                // CHOOSE THE HARDWARE # - ONLY APPLIES TO ONLINE SCHEDULER
+                setHardwareSetup(atoi(optarg));
                 break;
             case 'm':
                 setMutationRate(atof(optarg));

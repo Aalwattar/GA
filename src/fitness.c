@@ -38,6 +38,8 @@
 
 // FIX 
 static double RUNTIME_WEIGHT = DEFAULT_RUNTIME_WEIGHT;
+static int HARDWARE_INDEX = 2;
+
 static Common_Interface library;
 static Hardware hardware;
 
@@ -81,7 +83,7 @@ bool initScheduler(char * arch_filename, char * dfg_filename, char * prr_filenam
     if(initHardwareLibrary(prr_filename, &(hardware)) != EXIT_SUCCESS)
         exit(EXIT_FAILURE);
     
-    library.setup = hardware.setups[2];
+    library.setup = hardware.setups[HARDWARE_INDEX];
     
     // FIX - all rcScheduler's stuff
     InitSimulator(&library);
@@ -174,4 +176,17 @@ int getTaskType(int task_num){
 
 int getNumGenes(void){
     return library.dfg.num_nodes;
+}
+
+
+void setHardwareSetup(int index){
+    if(0 <= index && index <= 4){
+        HARDWARE_INDEX = index;
+        return;
+    }
+    
+    fprintf(stderr, "Invalid hardware index of [%d].\n", index);
+    fprintf(stderr, "The hardware index must be a number between 0 and 4 (Please see the prr.conf for more information)\n");
+    
+    exit(1);
 }
