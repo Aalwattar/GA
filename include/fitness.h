@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : July 10, 2013
+ * Modified : July 12, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -19,109 +19,72 @@
 #ifndef FITNESS_H
 #define	FITNESS_H
 
-#include <stdbool.h>
+// FIX - try to eliminate the dependency on a "higher level" class
 #include "individual.h"
 
+
 /******************************************************************************
- *****************           ARCHITECTURE FILE I/O            *****************
+ *****************             GETTERS AND SETTERS            *****************
  *****************************************************************************/
 
 /******************************************************************************
- * NAME : getNumArch
+ * NAME : setSetupIndex
  * 
- * PURPOSE : return the number of architectures that exist for that task
- * ARGUMENTS : int = which task that we are implementing
+ * PURPOSE : To choose with setup within the array of hardwares that 
+ * ARGUMENTS : int = the index of the hardware setup that you wish to test
  * 
- * RETURNS : false if the filename could not be found or opened or the file did 
- *              not follow the specified format
- *           true otherwise (successful completion)
+ * PRECONDITIONS : The index must be a value between 0 and 
+ *                      (the # of setups in prr.conf) - 1
+ * RETURNS : nothing (an invalid index will result in an exit(1);
  * 
- * NOTE : please see the README file for more information about the format
- *              and contents of the architecture information file
+ * NOTE : INDICES START AT 0 NOT 1 !!!
  *****************************************************************************/
-int getNumArch(int);
-
-
+void setSetupIndex(int);
 
 /******************************************************************************
- *****************        FITNESS FUNCTION (NAPOLEON)         *****************
- *****************************************************************************/        
-
-
-// FIX - all comments bellow this line are wrong
-/******************************************************************************
- * NAME : initNapoleon
+ * NAME : getNumNodes
  * 
- * PURPOSE : Create and initialize all of Napoleon's static data structures
- * ARGUMENTS : char * = the name of the file that contains the DFG that you
- *                        wish to schedule (please see Ahmed Al-Wattar for 
- *                        more information
+ * PURPOSE : getter for the number of nodes in the DFG that we are trying to 
+ *              schedule (AKA the number of genes in a chromosome)
  * 
- * RETURNS : true if Napoleon was successfully initialized
- *           false if anything has gone wrong (error message printed to stderr)
- *****************************************************************************/
-bool initScheduler(char *, char *, char *);
-
-// FIX
-/******************************************************************************
- * NAME : freeNapoleon
- * 
- * PURPOSE : free all of Napoleon's static data structures
- * PRECONDITION : This function should only be called if initNapoleon() 
- *                  returned true.
- *****************************************************************************/
-void freeScheduler(void);
-
-/******************************************************************************
- * NAME : evaluateFitness
- * 
- * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
- * ARGUMENTS : Individual * = the possible solution to be evaluated
- *****************************************************************************/
-void evaluateOfflineFitness(Individual *);
-
-/******************************************************************************
- * NAME : evaluateFitness
- * 
- * PURPOSE : Evaluate the fitness of one possible solution (a chromosome)
- * ARGUMENTS : Individual * = the possible solution to be evaluated
- *****************************************************************************/
-void evaluateOnlineFitness(Individual *);
-
-
-
-/******************************************************************************
- * NAME : getNumGenes
- * 
- * PURPOSE : getter for the number of genes in a chromosome (AKA the number of
- *              nodes in the DFG that we are trying to schedule)
- * PRECONDITIONS : This function should only be called after initNapoleon()
- *                      returns true.
+ * PRECONDITIONS : This function should ONLY be called after initScheduler();
  * 
  * RETURNS : the number of genes in a chromosome
  *****************************************************************************/
-int getNumGenes(void);
+int getNumNodes(void);
 
 /******************************************************************************
  * NAME : getTaskType
  * 
- * PURPOSE : getter for the type of each gene in a chromosome (AKA the type of
- *              task of each node in the DFG)
- * ARGUMENTS : int = the position of the gene (task) in a chromosome
+ * PURPOSE : getter for the task type that a node in the DFG corresponds to
+ * ARGUMENTS : int = the position of the node (task) in the DFG
  * 
- * PRECONDITIONS : This function should only be called after initNapoleon()
- *                      returns true.
+ * PRECONDITIONS : This function should ONLY be called after initScheduler();
  * 
- * RETURNS : the type of task (or Operation) of the chosen task
+ * RETURNS : the task type of the input node
  *****************************************************************************/
 int getTaskType(int);
 
 /******************************************************************************
+ * NAME : getNumArch
+ * 
+ * PURPOSE : return the number of architectures that exist for that task type
+ * ARGUMENTS : int = the task type
+ * 
+ * PRECONDITIONS : This function should ONLY be called after initScheduler();
+ * RETURNS : The number of hardware implementations available for a specific
+ *              task type
+ *****************************************************************************/
+int getNumArch(int);  
+
+
+
+/******************************************************************************
  * NAME : setRuntimeWeight
  * 
- * PURPOSE : The fitness function is derived of X% schedule runtime, and 
- *              (1 - X)% power. This function sets the value of X
- * ARGUMENTS : double * = The weight of the runtime when calculating a
+ * PURPOSE : The fitness function is derived of (X * schedule runtime), and 
+ *              ( (1 - X) * power). This function sets the value of X.
+ * ARGUMENTS : double = The weight of the runtime when calculating a
  *                        chromosome's fitness
  * 
  * PRECONDITIONS: The argument must be a number between 0 and 1 inclusive
@@ -139,8 +102,70 @@ void setRuntimeWeight(double);
 double getRuntimeWeight(void);
 
 
-void setHardwareSetup(int index);
+/******************************************************************************
+ * NAME : setFitnessFunction
+ * 
+ * PURPOSE : To set whether the user wishes to use the online scheduler
+ *              (rcsSimulator) or the offlineScheduler (Napoleon)
+ * ARGUMENTS : char * = a string (command line argument) that specifies the
+ *                      scheduler that should be used as a fitness function
+ * 
+ * NOTE : If the argument does not match any existing scheduler, this function
+ *              will cause the program to terminate via an exit(1);
+ *****************************************************************************/
+void setFitnessFunction(char *);
 
+/******************************************************************************
+ * NAME : getFitnessFunction
+ * 
+ * PURPOSE : return the name of the scheduler that the GA is using as its
+ *              fitness function 
+ * 
+ * RETURNS : A string that contains the name of the scheduler used as the
+ *              fitness function
+ *****************************************************************************/
+char * getFitnessFunction(void);
+
+/******************************************************************************
+ *****************              FITNESS FUNCTION              *****************
+ *****************************************************************************/
+
+/******************************************************************************
+ * NAME : initScheduler
+ * 
+ * PURPOSE : Create and initialize all of the fitness function's static data
+ *              structures
+ * ARGUMENTS : char * = the name + relative path to the architecture information
+ *                      file (arch.conf is the default)
+ *             char * = the name + relative path to the DFG you are trying to
+ *                      schedule (B1_10_5.conf is the default)
+ *             char * = the name + relative path to the hardware information
+ *                      file (prr.conf is the default)
+ * 
+ * RETURNS : EXIT_SUCCESS if the fitness function was successfully initialized
+ *           EXIT_FAILURE if anything has gone wrong (with an error message 
+ *              printed to stderr)
+ *****************************************************************************/
+int initScheduler(char *, char *, char *);
+
+
+/******************************************************************************
+ * NAME : evaluateFitness
+ * 
+ * PURPOSE : Evaluate the fitness of one possible solution (AKA a chromosome, 
+ *              AKA a series of architectures or implementations)
+ * ARGUMENTS : Individual * = the possible solution to be evaluated
+ *****************************************************************************/
+void evaluateFitness(Individual *);
+
+/******************************************************************************
+ * NAME : freeNapoleon
+ * 
+ * PURPOSE : free all of the fitness function's static data structures
+ * PRECONDITION : This function should only be called if initScheduler() 
+ *                  returned true.
+ *****************************************************************************/
+void freeScheduler(void);
 
 #endif	/* FITNESS_H */
 

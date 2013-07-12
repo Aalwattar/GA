@@ -36,13 +36,13 @@ CC		= gcc
 C_FLAGS 	= -std=gnu99 -Wall -pedantic
 
 DEBUG_FLAGS	= -DDEBUG -g -p -O0
-VERBOSE_FLAGS	= -DVERBOSE -O2
-EXE_FLAGS	= -DEXE -O2 
+VERBOSE_FLAGS	= -DVERBOSE -O3
+EXE_FLAGS	= -DEXE -O3 
 
 C_INCLUDES   	= -Iinclude -Ilibs
 # FIX - change the following line to be a relative path?
 L_INCLUDES	= -L/home/jennifer/work/GeneticAlgorithm/libs -lrcsSimulator \
-		  -lcommonInterfaces -lconfuse -lm  -lofflineScheduler
+		  -lcommonInterfaces -lm -lofflineScheduler
 
 
 #directory names

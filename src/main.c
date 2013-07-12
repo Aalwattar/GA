@@ -97,6 +97,7 @@ int main(int argc, char * argv[]){
 
 // FIX - too long
 // FIX - print out every parameter selected
+// FIX - Make a function that prints out its usage (help function)
 void initParameters(int argc, char ** argv){
     char * arch_filename = DEFAULT_ARCH_FILENAME;
     char * dfg_filename = DEFAULT_DFG_FILENAME;
@@ -136,7 +137,7 @@ void initParameters(int argc, char ** argv){
                 STOP_CONDITION = atoi(optarg);
                 break;
             case 'h':
-                setHardwareSetup(atoi(optarg));
+                setSetupIndex(atoi(optarg));
                 break;
             case 'm':
                 setMutationRate(atof(optarg));
@@ -211,8 +212,7 @@ void initParameters(int argc, char ** argv){
 
     
     if(POP_SIZE == 0){
-        POP_SIZE = getNumGenes();
-        fprintf(stdout, "There are %d genes\n", getNumGenes());
+        POP_SIZE = getNumNodes();
     }
     
     fprintf(stdout, "Parameters:\n");
@@ -244,6 +244,7 @@ void initParameters(int argc, char ** argv){
     else
         fprintf(stdout, "\tReplacement Algorithm = Keep Best\n\n");
     
+    // FIX - make this dynamic
     fprintf(stdout, "\tSeeding Ratio = %.4lf\n\n", (1.0 - PERCENT_POP_RANDOM));
 }
 

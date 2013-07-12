@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 24, 2013
+ * Modified : July 12, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -22,10 +22,7 @@
 #include "util.h"
 
 typedef struct{
-    int * encoding;     // their genotype
-                        // This is 2 longer then the number of tasks
-                                // The second last integer = The areas distribution of PRRs
-                                // The last integer = the number of PRRs
+    int * encoding;     // their genotype (corresponds to an architecture's index)
     
     int fitness;
     int exec_time;

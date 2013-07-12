@@ -32,7 +32,6 @@
 // FIX
 static double CROSSOVER_RATE = DEFAULT_CROSSOVER_RATE;
 static double MUTATION_RATE  = DEFAULT_MUTATION_RATE;
-static int OFFLINE_SCHEDULER = 1;
 
 
 Population * genRandPopulation(int pop_size){
@@ -87,31 +86,10 @@ void freePopulation(Population * pop){
 
 void determineFitness(Population * pop){
     int i;
-    
-    // FIX 
-    for (i = 0; i < pop->size; i++){
-        if(OFFLINE_SCHEDULER)
-            evaluateOfflineFitness(&(pop->member[i]));
-        else
-            evaluateOnlineFitness(&(pop->member[i]));
-    }
-}
+     
+    for (i = 0; i < pop->size; i++)
+        evaluateFitness(&(pop->member[i]));
 
-int setFitnessFunction(char * input){
-    if(strncasecmp("onlineSchdeuler", input, strlen(input))  == 0 || 
-        strncasecmp("Online Schdeuler", input, strlen(input)) == 0 ||
-        strncasecmp("rcScheduler", input, strlen(input)) == 0 ||
-        strncasecmp("rcSimulator", input, strlen(input)) == 0 )
-        OFFLINE_SCHEDULER = 0;
-    else if(strncasecmp("offlineScheduler", input, strlen(input)) != 0 &&
-            strncasecmp("offline Scheduler", input, strlen(input)) != 0 &&
-            strncasecmp("Napoleon", input, strlen(input)) != 0){
-        fprintf(stderr, "Unknown crossover option : %s\n", input);
-        exit(1);
-    }
-    
-    // FIX
-    return 1;
 }
 
 void printPopDiversity(Population * pop) {
@@ -138,7 +116,7 @@ void printPopDiversity(Population * pop) {
             
             // calculate the hamming distance between a pair of individuals
             ind_distance = 0;
-            for (g=0; g < getNumGenes(); g++)
+            for (g=0; g < getNumNodes(); g++)
                 if((pop->member[i]).encoding[g] != (pop->member[j]).encoding[g])
                     ind_distance++;
             
@@ -164,7 +142,7 @@ void printPopDiversity(Population * pop) {
     percent_unique = (double) sum_unique / pop->size;
     
     
-    hamming_normalizer = (pop->size * pop->size * getNumGenes()) / 2.0;
+    hamming_normalizer = (pop->size * pop->size * getNumNodes()) / 2.0;
 	fprintf(stdout,"\n\nHammig distance sum [%f] h[%f] --- Unique % -->[%f]\n\n",
                     (double) pop_distance / hamming_normalizer,
                     (double) sum_hamming / hamming_normalizer,
@@ -173,9 +151,10 @@ void printPopDiversity(Population * pop) {
     free(uniqueFitness);
 }
 
+#define MAX_NUM_TYPES 10 // FIX - make this dynamic!!!
 void printGeneComposition(Population * pop) {
     int ** occurrence;
-    int num_genes = getNumGenes();
+    int num_genes = getNumNodes();
     int num_types = MAX_NUM_TYPES;   // FIX
     int g, i, t;
     

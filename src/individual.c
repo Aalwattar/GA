@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 24, 2013
+ * Modified : July 12, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -16,40 +16,33 @@
  *              solution to the problem (an individual in the population)
  ******************************************************************************/
 
-#include "config.h"
-#include "individual.h"
-#include "fitness.h"
-#include "population.h"
-#include "util.h"
-
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "config.h"
+#include "population.h" // FIX - This should NOT need to be included! (change location of get / set mutation rate?)
+#include "individual.h"
+#include "fitness.h"
+#include "util.h"
 
 
 void initRandIndividual(Individual * ind){
     int i;
     
-    ind->encoding = malloc(sizeof(int) * getNumGenes());
-        
-    for(i=0; i<getNumGenes(); i++)
+    ind->encoding = malloc(sizeof(int) * getNumNodes());
+    for(i=0; i<getNumNodes(); i++)
         ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
 }
 
-// FIX - get rid of MAX_NUM_GENES
+
+#define MAX_NUM_GENES 500 // FIX - make this dynamic
 void initSeededIndividual(Individual * ind){
     static int alleleTracker[MAX_NUM_GENES];
 	int i;
 
-	ind->encoding = malloc(sizeof(int) * getNumGenes());
-
-    // FIX - the logic right here should be able to be shortened from 4 lines to three. or two.
-	for (i=0; i < getNumGenes(); i++){
-		if (alleleTracker[i] == getNumArch(getTaskType(i)) - 1){
-			alleleTracker[i] = 0;
-		}
-
-		ind->encoding[i] = (alleleTracker[i])++;
-	}
+	ind->encoding = malloc(sizeof(int) * getNumNodes());    
+	for (i=0; i < getNumNodes(); i++)
+        ind->encoding[i] = ((alleleTracker[i])++ ) % (getNumArch(getTaskType(i)));
 }
 
 void freeIndividual(Individual * i){
@@ -59,9 +52,9 @@ void freeIndividual(Individual * i){
 void duplicateIndividual(Individual * copy, Individual * original){
     int i;
     
-    copy->encoding = malloc(sizeof(int) * getNumGenes());
+    copy->encoding = malloc(sizeof(int) * getNumNodes());
     
-    for(i=0; i<getNumGenes(); i++)
+    for(i=0; i<getNumNodes(); i++)
         copy->encoding[i] = original->encoding[i];
     
     copy->energy =      original->energy;
@@ -75,7 +68,7 @@ void duplicateIndividual(Individual * copy, Individual * original){
 void mutateRotationally(Individual * ind){
     int i;
     
-    for(i=0; i<getNumGenes(); i++)
+    for(i=0; i<getNumNodes(); i++)
         if(randomNumber() < getMutationRate()){
             ind->encoding[i] = (ind->encoding[i] + 1) % getNumArch(getTaskType(i));
         }
@@ -85,7 +78,7 @@ void mutateRandomly(Individual * ind){
     int new_gene;
     int i;
     
-    for(i=0; i<getNumGenes(); i++)
+    for(i=0; i<getNumNodes(); i++)
         if(randomNumber() < getMutationRate()){
             new_gene = getNumArch(getTaskType(i)) * randomNumber();
             
@@ -101,12 +94,12 @@ void onePointCrossover(Individual * p1, Individual * p2){
     int temp;
     int i;
     
-    cross_point = getNumGenes() * randomNumber();
+    cross_point = getNumNodes() * randomNumber();
     
-    while(cross_point == 0 || cross_point == getNumGenes())
-        cross_point = getNumGenes() * randomNumber();
+    while(cross_point == 0 || cross_point == getNumNodes())
+        cross_point = getNumNodes() * randomNumber();
     
-    for(i=cross_point; i < getNumGenes(); i++){
+    for(i=cross_point; i < getNumNodes(); i++){
         temp = p1->encoding[i];
         p1->encoding[i] = p2->encoding[i];
         p2->encoding[i] = temp;
@@ -118,11 +111,11 @@ void twoPointCrossover(Individual * p1, Individual * p2){
     int temp;
     int i;
     
-    cross1 = getNumGenes() * randomNumber();
-    cross2 = getNumGenes() * randomNumber();
+    cross1 = getNumNodes() * randomNumber();
+    cross2 = getNumNodes() * randomNumber();
     
     while(cross1 == cross2)
-        cross2 = getNumGenes() * randomNumber();
+        cross2 = getNumNodes() * randomNumber();
 
     if(cross1 > cross2){
         temp = cross1; 
@@ -141,7 +134,7 @@ void printIndividual(Individual * ind){
     int i;
     
     // print the chromosome
-    for (i = 0; i < getNumGenes(); i++)
+    for (i = 0; i < getNumNodes(); i++)
         fprintf(stdout, "%d", ind->encoding[i] + 1);
     
     // Napoleon information
