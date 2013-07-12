@@ -26,6 +26,11 @@
 #include "util.h"
 
 
+
+/******************************************************************************
+ *****************            CREATION AND DELETION           *****************
+ *****************************************************************************/
+
 void initRandIndividual(Individual * ind){
     int i;
     
@@ -65,6 +70,12 @@ void duplicateIndividual(Individual * copy, Individual * original){
 
 }
 
+
+
+/******************************************************************************
+ *****************                MANIPULATION                *****************
+ *****************************************************************************/
+
 void mutateRotationally(Individual * ind){
     int i;
     
@@ -73,6 +84,8 @@ void mutateRotationally(Individual * ind){
             ind->encoding[i] = (ind->encoding[i] + 1) % getNumArch(getTaskType(i));
         }
 }              
+
+
 
 void mutateRandomly(Individual * ind){
     int new_gene;
@@ -88,6 +101,8 @@ void mutateRandomly(Individual * ind){
             ind->encoding[i] = new_gene;
         }
 }  
+
+
 
 void onePointCrossover(Individual * p1, Individual * p2){
     int cross_point;
@@ -130,6 +145,8 @@ void twoPointCrossover(Individual * p1, Individual * p2){
     }
 }
 
+
+
 void printIndividual(Individual * ind){
     int i;
     
@@ -137,7 +154,7 @@ void printIndividual(Individual * ind){
     for (i = 0; i < getNumNodes(); i++)
         fprintf(stdout, "%d", ind->encoding[i] + 1);
     
-    // Napoleon information
+    // Fitness information
     fprintf(stdout, "\tfitness = %d\truntime = %d\tprefetch = %d\tpower = %d\treuse = %d\n", 
                 ind->fitness, ind->exec_time, ind->prefetch, ind->energy, ind->num_reuse);
 }

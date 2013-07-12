@@ -200,6 +200,8 @@ void evolvePopulation(Population * pop, int crossover_type, int mutation_type){
     int i;
     
     for(i=0; i + 1 < pop->size; i = i + 2)
+        // NOTE - I chose to check CROSSOVER_RATE here instead of within the crossover
+        //        functions to reduce the overhead associated with every function call
         if(randomNumber() < CROSSOVER_RATE){
             if(crossover_type == 1)
                 onePointCrossover(&(pop->member[i]), &(pop->member[i + 1]));
