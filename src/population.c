@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 25, 2013
+ * Modified : July 10, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -20,19 +20,62 @@
 #include "population.h"
 #include "fitness.h"
 #include "selection.h"
+// FIX - Make this file use replacement.h instead of from main
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <math.h>
 #include <limits.h>
 
 
-// FIX
+
+/******************************************************************************
+ *****************             GETTERS AND SETTERS            *****************
+ *****************************************************************************/
+
+// FIX - remove global variables somehow? eg. by making into arguments to function
 static double CROSSOVER_RATE = DEFAULT_CROSSOVER_RATE;
 static double MUTATION_RATE  = DEFAULT_MUTATION_RATE;
 
+void setCrossoverRate(double rate){
+    if(0 <= rate && rate <= 1){
+        CROSSOVER_RATE = rate;
+        return;
+    }
+    
+    fprintf(stderr, "Invalid crossover rate %.3lf.\n", rate);
+    fprintf(stderr, "The crossover rate must be a decimal number between 0 and 1\n");
+    
+    exit(1);
+}
+
+double getCrossoverRate(void){
+    return CROSSOVER_RATE;
+}
+
+
+void setMutationRate(double rate){
+    if(0 <= rate && rate <= 1){
+        MUTATION_RATE = rate;
+        return;
+    }
+    
+    fprintf(stderr, "Invalid mutation rate %.3lf.\n", rate);
+    fprintf(stderr, "The mutation rate must be a decimal number between 0 and 1\n");
+    
+    exit(1);
+}
+
+double getMutationRate(void){
+    return MUTATION_RATE;
+}
+
+
+
+/******************************************************************************
+ *****************            CREATION AND DELETION           *****************
+ *****************************************************************************/
 
 Population * genRandPopulation(int pop_size){
     Population * pop;
@@ -45,7 +88,7 @@ Population * genRandPopulation(int pop_size){
     for(i=0; i < pop_size; i++)
         initRandIndividual(&(pop->member[i]));
 
-    fprintf(stderr,"\nRandom Individuals: [%d] out of [%d]\n", pop_size, pop_size);    
+    fprintf(stderr,"\tRandom Individuals: [%d] out of [%d]\n", pop_size, pop_size);    
     return pop;
 }
 
@@ -69,7 +112,7 @@ Population * genSeededPopulation(int pop_size){
     	}
     }
 
-    fprintf(stdout,"\nNo of random Ind [%d] out of [%d]\n", num_random, pop_size);
+    fprintf(stdout,"\tRandom Individuals: [%d] out of [%d]\n", num_random, pop_size);
     return pop;
 }
 
@@ -84,13 +127,56 @@ void freePopulation(Population * pop){
 }
 
 
+
+/******************************************************************************
+ *****************                MANIPULATION                *****************
+ *****************************************************************************/
+
 void determineFitness(Population * pop){
     int i;
      
     for (i = 0; i < pop->size; i++)
         evaluateFitness(&(pop->member[i]));
+    
+    // FIX - make the above function have a wrapper in individual.c 
+    //       (This file should never reference fitness.c directly)
 
 }
+
+// The compare function for qsort
+int compare(const void * p1, const void * p2){
+    return ((Individual *)p1)->fitness - ((Individual *)p2)->fitness;
+}
+
+void sortByFitness(Population * pop){
+    qsort(pop->member, pop->size, sizeof(Individual), compare);
+}
+
+
+void evolvePopulation(Population * pop, int crossover_type, int mutation_type){
+    int i;
+    
+    for(i=0; i + 1 < pop->size; i = i + 2)
+        // NOTE - I chose to check CROSSOVER_RATE here instead of within the crossover
+        //        functions to reduce the overhead associated with every function call
+        if(randomNumber() < CROSSOVER_RATE){
+            if(crossover_type == 1)
+                onePointCrossover(&(pop->member[i]), &(pop->member[i + 1]));
+            else
+                twoPointCrossover(&(pop->member[i]), &(pop->member[i + 1]));
+        }
+                
+    if(mutation_type == 1)
+        for(i=0; i < pop->size; i++)
+            mutateRotationally(&(pop->member[i]));
+    else
+        for(i=0; i < pop->size; i++)
+            mutateRandomly(&(pop->member[i]));
+}
+
+
+
+
 
 void printPopDiversity(Population * pop) {
     static int old_ind_distance;    // the previously calculated hamming distance between a pair of individuals
@@ -185,72 +271,8 @@ void printGeneComposition(Population * pop) {
 }
 
 
-// The compare function for qsort
-int compare(const void * p1, const void * p2){
-    return ((Individual *)p1)->fitness - ((Individual *)p2)->fitness;
-}
-
-void sortByFitness(Population * pop){
-    qsort(pop->member, pop->size, sizeof(Individual), compare);
-}
 
 
-
-void evolvePopulation(Population * pop, int crossover_type, int mutation_type){
-    int i;
-    
-    for(i=0; i + 1 < pop->size; i = i + 2)
-        // NOTE - I chose to check CROSSOVER_RATE here instead of within the crossover
-        //        functions to reduce the overhead associated with every function call
-        if(randomNumber() < CROSSOVER_RATE){
-            if(crossover_type == 1)
-                onePointCrossover(&(pop->member[i]), &(pop->member[i + 1]));
-            else
-                twoPointCrossover(&(pop->member[i]), &(pop->member[i + 1]));
-        }
-                
-    if(mutation_type == 1)
-        for(i=0; i < pop->size; i++)
-            mutateRotationally(&(pop->member[i]));
-    else
-        for(i=0; i < pop->size; i++)
-            mutateRandomly(&(pop->member[i]));
-}
-
-
-
-void setCrossoverRate(double rate){
-    if(0 <= rate && rate <= 1){
-        CROSSOVER_RATE = rate;
-        return;
-    }
-    
-    fprintf(stderr, "Invalid crossover rate %.3lf.\n", rate);
-    fprintf(stderr, "The crossover rate must be a decimal number between 0 and 1\n");
-    
-    exit(1);
-}
-
-double getCrossoverRate(void){
-    return CROSSOVER_RATE;
-}
-
-
-void setMutationRate(double rate){
-    if(0 <= rate && rate <= 1){
-        MUTATION_RATE = rate;
-        return;
-    }
-    
-    fprintf(stderr, "Invalid mutation rate %.3lf.\n", rate);
-    fprintf(stderr, "The mutation rate must be a decimal number between 0 and 1\n");
-    
-    exit(1);
-}
-
-double getMutationRate(void){
-    return MUTATION_RATE;
-}
 
 
 void printPopulation(Population * pop){

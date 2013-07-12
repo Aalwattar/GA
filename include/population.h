@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 24, 2013
+ * Modified : July 12, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -22,20 +22,69 @@
 
 #include "individual.h"
 
+
+
+/******************************************************************************
+ *****************             GETTERS AND SETTERS            *****************
+ *****************************************************************************/
+
+/******************************************************************************
+ * NAME : setCrossoverRate
+ * 
+ * PURPOSE : a setter for the crossover rate
+ * ARGUMENTS : double = a real number between 0 and 1 
+ *****************************************************************************/
+void setCrossoverRate(double);
+
+/******************************************************************************
+ * NAME : getCrossoverRate
+ * 
+ * PURPOSE : getter for the crossover rate 
+ * RETURNS : The rate of crossover as a number between 0 and 1
+ *****************************************************************************/
+double getCrossoverRate(void);
+
+
+/******************************************************************************
+ * NAME : setMutationRate
+ * 
+ * PURPOSE : a setter for the mutation rate
+ * ARGUMENTS : double = a real number between 0 and 1 
+ *****************************************************************************/
+void setMutationRate(double);
+
+/******************************************************************************
+ * NAME : getMutationRate
+ * 
+ * PURPOSE : getter for the mutation rate 
+ * RETURNS : The rate of mutation as a number between 0 and 1
+ *****************************************************************************/
+double getMutationRate(void);
+
+
+/*******************************************************************************
+ * Population
+ * 
+ * Contains an array of all the individuals in a population along with the 
+ * number of individuals in the population      
+ ******************************************************************************/
 typedef struct{
     Individual * member;
     int         size;
 }Population;
 
+
+
 /******************************************************************************
- ******************         POPULATION MANIPULATION         *******************
+ *****************            CREATION AND DELETION           *****************
  *****************************************************************************/
 
 /******************************************************************************
  * NAME : genRandPopulation
  * 
  * PURPOSE : Creates a population of individuals. Each individual will
- *              contain randomly generated genes, but is still a valid solution
+ *              contain randomly generated genes.
+ *           see initRandIndividual() for more information
  * ARGUMENTS : int = the number of individuals in the population
  * 
  * RETURNS : A population of randomly generated individuals
@@ -52,6 +101,8 @@ Population * genRandPopulation(int);
  *              diverse starting population. PERCENT_POP_RANDOM in config.h
  *              determines what percentage of the population is randomly 
  *              generated, with the remaining individuals being seeded.
+ *           see initRandIndividual() and initSeededIndividual() for more 
+ *              information
  * ARGUMENTS : int = the number of individuals in the population
  * 
  * RETURNS : A population consisting of some random and some seeded individuals
@@ -73,15 +124,10 @@ Population * genSeededPopulation(int);
 void freePopulation(Population *);
 
 
-/******************************************************************************
- * NAME : evolvePopulation
- * 
- * PURPOSE : Perform recombination and mutation on the provided Population
- * ARGUMENTS : Population * = the population that you wish to transform
- *             int = the size of that population;
- *****************************************************************************/
-void evolvePopulation(Population *, int, int);
 
+/******************************************************************************
+ *****************                MANIPULATION                *****************
+ *****************************************************************************/
 
 /******************************************************************************
  * NAME : determineFitness
@@ -90,7 +136,6 @@ void evolvePopulation(Population *, int, int);
  * ARGUMENTS : Population * = the population that you wish evaluate
  *****************************************************************************/
 void determineFitness(Population *);
-
 
 /******************************************************************************
  * NAME : evaluateRanks
@@ -101,42 +146,21 @@ void determineFitness(Population *);
  *****************************************************************************/
 void sortByFitness(Population *);
 
+/******************************************************************************
+ * NAME : evolvePopulation
+ * 
+ * PURPOSE : Perform recombination (crossover) and mutation on a Population
+ * ARGUMENTS : Population * = the population that you wish to transform
+ *             int = the crossover type that was chosen
+ *             int = the mutation type that was chosen
+ *****************************************************************************/
+void evolvePopulation(Population *, int, int);
+
 
 
 /******************************************************************************
- * NAME : setCrossoverRate
- * 
- * PURPOSE : a setter for the crossover rate
- * ARGUMENTS : char * = a real number between 0 and 1 
+ *****************               VISUALIZATION                *****************
  *****************************************************************************/
-void setCrossoverRate(double);
-
-/******************************************************************************
- * NAME : getCrossoverRate
- * 
- * PURPOSE : getter for the crossover rate 
- * RETURNS : The rate of crossover as a number between 0 and 1
- *****************************************************************************/
-double getCrossoverRate(void);
-
-
-/******************************************************************************
- * NAME : setMutationRate
- * 
- * PURPOSE : a setter for the mutation rate
- * ARGUMENTS : char * = a real number between 0 and 1 
- *****************************************************************************/
-void setMutationRate(double);
-
-/******************************************************************************
- * NAME : getMutationRate
- * 
- * PURPOSE : getter for the mutation rate 
- * RETURNS : The rate of mutation as a number between 0 and 1
- *****************************************************************************/
-double getMutationRate(void);
-
-
 
 /******************************************************************************
  * NAME : printPopulation
