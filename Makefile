@@ -23,8 +23,7 @@
 ##
 ##  3. verbose	 : print every generation
 ##
-##  4. stats	 : print ever generation alongside its statistical
-##		    information
+##  4. diversity : print ever generation alongside its diversity information
 ##
 ###############################################################################
 

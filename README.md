@@ -1,6 +1,24 @@
 GA
 ================================================================================
-Implementation of a simple Genetic Algorithm for scheduling optimization
+Implementation of a Genetic Algorithm for scheduling optimization
+
+
+TO BUILD:
+--------------------------------------------------------------------------------
+use one of the following commands:
+
+    1) make
+        No optimization, only print the final generation
+
+    2) make debug
+        No optimization, enable profiling and valgrind options.
+        *** FOR TESTING PURPOSES ONLY ***
+
+    3) make verbose
+        Optimized code. Print every generation.
+
+    4) make diversity
+        Optimized code. Print every generation with diversity information
 
 
 
@@ -22,10 +40,14 @@ OfflineScheduler.exe [options]
         Set the crossover rate to DECIMAL_NUM
     
 -d FILE
-        Use FILE as the DFG file (usually contains a .aif extention)
+        Use FILE as the DFG file (usually contains a .conf extention)
 
 -g INTEGER
         Run the genetic algorithm for INTEGER generations
+
+-h INTEGER
+        Use the (INTEGER)th setup in the prr.conf file. (This only matters when
+            using the Online Scheduler (rcSimulator) as the fitness function
 
 -m DECIMAL_NUM
         Set the mutation rate to DECIMAL_NUM
@@ -51,20 +73,27 @@ OfflineScheduler.exe [options]
 -t INTEGER
         Seed the random number generator with INTEGER
 
+-v 
+        Print out the development version and build of the GA
+
 -w DECIMAL_NUM
         Set the weighting of the schedule's runtime in the fitness function
         (The power weight is automatically calculated to be (1.0 - runtime weight) )
 
 
 - These arguments are all optional and can be entered in any order.
-- more options are currently in development
+
 
 
 DEFAULT VALUES:
 --------------------------------------------------------------------------------
-Default Values
-- Architecture Library file = input/architecture_library.txt
-- DFG = input/B1_10_5.aif
+Run Parameters
+- Scheduler = Offline Scheduler (Napoleon)
+- Fitness function = 87.5% runtime + 12.5% power
+
+- Architecture Library file = input/arch_library.conf
+- DFG file = input/B1_10_5.conf
+- PRR file = input/prr.conf
 
 - Crossover rate = 0.85
 - Crossover Algorithm = two point crossover
@@ -77,9 +106,17 @@ Default Values
 - Selection Algorithm = Tournament selection
 - Replacement Algorithm = Replace All
 
+- Seed = current system time
+- Seeded individuals = 25%
+
+- Unique Phenotype tolerance = 0
+- Default setup index = 2
+(please see config.h for more information)
+
 Program Output
 - Error messages are currently being printed to stderr
 - All other program output is printed to stdout
+
 
 
 CONSTRAINTS
@@ -92,41 +129,19 @@ The Mutation rate should be a decimal number between 0 and 1
 The Population size should be a number between 2 and 10000
 The number of generations should be greater than 1
 
-** FIX!! **
+
+** TO BE FIXED **
 The percentage of individuals that are seeded in each generation is a number
 that is fixed in config.h. In order to change the percentage of individuals
 that are random, you must manually change the value in config.h. 
 (no command line arguments exist at the moment)
 - This values is currently set to 75% random (= 25% of population is seeded)
 
-ARCHITECTURE FILE FORMAT
+Unique Phenotype tolerance (AKA MAX_PHENOTYPE_DEVIATION) and DEFAULT_SETUP_INDEX
+also share the same manual configuration limitations. 
+
+
+
+ARCHITECTURE, DFG, AND PRR FILE FORMATS
 --------------------------------------------------------------------------------
-The very first line in the file MUST be as follows:
-    Num_Tasks= #
-        # = the number different tasks that this file contains  
-
-The properties of each task must be entered in the following order:  
-<NAME> <COLUMNS> <ROWS> <CONFIGURATION_TIME> <EXECUTION_TIME> <CONFIGURATION_POWER> <EXECUTION_POWER>
-
-- each property must be an integer separated by one or more whitespaces
-
-Lines beginning with # are ignored by the parser  
-
-All implementations of the same task MUST have the exact same name (eg. TASK2)
-- I assume that there is only one GPP architecture, and it always appears in the
-    architecture library file before all hardware implementations of that same
-    type.
-
-
-FUTURE IMPLEMENTATION IDEAS
---------------------------------------------------------------------------------
-###Migration of software tasks to hardware
-- The GA and architecture files currently have the potential to support the
-    migration of software tasks to hardware. 
-- I currently assume that the GPP architecture exists, but simply never choose
-    it when creating individuals or using the generational operators
-
-- Napoleon on the other had does not. 
-- Please search for the tag // RESTRICTION for more information
-
-Please see the // FUTURE tags in the source code
+Please see https://github.com/Ratchette/CommonParser for more details
