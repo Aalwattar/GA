@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : June 26, 2013
+ * Modified : July 24, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -18,64 +18,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
-#include <stdbool.h>
 #include <getopt.h>
-#include <sys/time.h>
 
 #include "config.h"
-#include "fitness.h"
 #include "selection.h"
 #include "replacement.h"
+#include "fitness.h"
 
-// FIX
-static int STOP_CONDITION = 150;
+// FIX - Don't make these global variables
+static int MAX_NUM_GENERATIONS = 150;
 static int POP_SIZE = 0;
 
-// FIX 
-int crossover_type = 2;
-int mutation_type = 1;
-int replacement_type = 1;
-int selection_type = 1;
+static int crossover_type = 2;
+static int mutation_type = 1;
+static int replacement_type = 1;
+static int selection_type = 1;
 
 
 void initParameters(int, char **);
 void freeParameters(void);
 void setPopSize(int);
 
-// FIX - implement this
-bool populationConverged(Population * pop);
-
 
 int main(int argc, char * argv[]){
     Population * pop, * selected;
     Individual * best_solution;
-    int generation_num = 0;
+    int generation_num;
     
     initParameters(argc, argv);
     pop = genSeededPopulation(POP_SIZE);
-//    printGeneComposition(pop);
+    
+#if (defined DIVERSITY)
+    printGeneComposition(pop);
+#endif
 
     determineFitness(pop);
     sortByFitness(pop);
 
-    while(generation_num < STOP_CONDITION){
-        #if  (defined VERBOSE || defined EXE)
-            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
-            printPopulation(pop);
-        #endif
+    generation_num = 0;
+    while(generation_num < MAX_NUM_GENERATIONS){
         
-        // FIX
+    #if  (defined VERBOSE || defined DIVERSITY)
+        fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
+        printPopulation(pop);
+    #endif
+        
+        // FIX - use function pointers instead of flags + if statement
         if(selection_type == 1)
             selected = tournamentSelection(pop);
         else 
             selected = randomSelection(pop);
             
-        // FIX
+        // FIX - use function pointers instead of flags + if statement
         evolvePopulation(selected, crossover_type, mutation_type);
         determineFitness(selected);
         
-        // FIX
+        // FIX - use function pointers instead of flags + if statement
         if(replacement_type == 1)
             pop = replaceAll(pop, selected);
         else  
@@ -86,8 +84,9 @@ int main(int argc, char * argv[]){
     
     fprintf(stdout, "\nFINAL RESULT:\n");
     printPopulation(pop);
-    best_solution = findBest(pop);
+    
     fprintf(stdout, "\nBEST SOLUTION:\n");
+    best_solution = findBest(pop);
     printIndividual(best_solution);
     
     freePopulation(pop);
@@ -95,8 +94,7 @@ int main(int argc, char * argv[]){
     return EXIT_SUCCESS;
 } 
 
-// FIX - too long
-// FIX - print out every parameter selected
+// FIX - too long (separate into more than one function)
 // FIX - Make a function that prints out its usage (help function)
 void initParameters(int argc, char ** argv){
     char * arch_filename = DEFAULT_ARCH_FILENAME;
@@ -106,12 +104,12 @@ void initParameters(int argc, char ** argv){
     int c;
 
     opterr = 0;
-
     while((c = getopt(argc, argv, "a:b:c:d:f:g:h:m:n:o:p:r:s:t:Vvw:")) != -1){
         switch(c){
             case 'a':
                 arch_filename = optarg;
                 break;
+                
             case 'b':
                 if(strncasecmp("one-point", optarg, strlen(optarg))  == 0 || 
                     strncasecmp("one_point", optarg, strlen(optarg)) == 0 ||
@@ -124,24 +122,31 @@ void initParameters(int argc, char ** argv){
                     exit(1);
                 }
                 break;
+                
             case 'c':
                 setCrossoverRate(atof(optarg));
                 break;
+                
             case 'd':
                 dfg_filename = optarg;
                 break;
+                
             case 'f':
                 setFitnessFunction(optarg);
                 break;
+                
             case 'g':
-                STOP_CONDITION = atoi(optarg);
+                MAX_NUM_GENERATIONS = atoi(optarg);
                 break;
+                
             case 'h':
                 setSetupIndex(atoi(optarg));
                 break;
+                
             case 'm':
                 setMutationRate(atof(optarg));
                 break;
+                
             case 'n':
                if(strncasecmp("random", optarg, strlen(optarg)) == 0)
                     mutation_type = 2;
@@ -150,9 +155,11 @@ void initParameters(int argc, char ** argv){
                     exit(1);
                 }
                 break;
+                
             case 'p':
                 setPopSize(atoi(optarg));
                 break;
+                
             case 'r':
                 if(strncasecmp("keep-best", optarg, strlen(optarg))  == 0 ||
                     strncasecmp("keep_best", optarg, strlen(optarg)) == 0 ||
@@ -207,8 +214,9 @@ void initParameters(int argc, char ** argv){
     // FIX - Check the return value
     seedRandGenerator(seed);
     
-    // FIX
-    initScheduler(arch_filename, dfg_filename, prr_filename);
+
+    if(initScheduler(arch_filename, dfg_filename, prr_filename) == EXIT_FAILURE)
+        exit(1);
 
     
     if(POP_SIZE == 0){
@@ -216,9 +224,9 @@ void initParameters(int argc, char ** argv){
     }
     
     fprintf(stdout, "Parameters:\n");
-    fprintf(stdout, "\tSeed = %d\n\n", seed);
+    fprintf(stdout, "\tFitness Function = %s\n\n", getFitnessFunction());
     fprintf(stdout, "\tPopulation Size       = %d\n", POP_SIZE);
-    fprintf(stdout, "\tNumber of Generations = %d\n\n", STOP_CONDITION);
+    fprintf(stdout, "\tNumber of Generations = %d\n\n", MAX_NUM_GENERATIONS);
     fprintf(stdout, "\tMutation Rate  = %.4lf\n", getMutationRate());
     fprintf(stdout, "\tCrossover Rate = %.4lf\n", getCrossoverRate());
     fprintf(stdout, "\tRuntime Weight = %.4lf\n", getRuntimeWeight());
@@ -245,7 +253,8 @@ void initParameters(int argc, char ** argv){
         fprintf(stdout, "\tReplacement Algorithm = Keep Best\n\n");
     
     // FIX - make this dynamic
-    fprintf(stdout, "\tSeeding Ratio = %.4lf\n\n", (1.0 - PERCENT_POP_RANDOM));
+    fprintf(stdout, "\tSeed             = %d\n", seed);
+    fprintf(stdout, "\tPercent seeding  = %.4lf\n", (1.0 - PERCENT_POP_RANDOM));
 }
 
 
@@ -264,13 +273,3 @@ void setPopSize(int size){
     
     exit(1);
 }
-
-// COMMENTING TEMPLATE
-/******************************************************************************
- * NAME : initRandGenerator
- * PURPOSE : 
- * ARGUMENTS : 
- * PRECONDITIONS : 
- * RETURNS : 
- * NOTE : 
- *****************************************************************************/

@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : July 10, 2013
+ * Modified : July 14, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -88,7 +88,7 @@ Population * genRandPopulation(int pop_size){
     for(i=0; i < pop_size; i++)
         initRandIndividual(&(pop->member[i]));
 
-    fprintf(stderr,"\tRandom Individuals: [%d] out of [%d]\n", pop_size, pop_size);    
+    fprintf(stdout, "\tAll solutions generated randomly"); 
     return pop;
 }
 
@@ -112,7 +112,7 @@ Population * genSeededPopulation(int pop_size){
     	}
     }
 
-    fprintf(stdout,"\tRandom Individuals: [%d] out of [%d]\n", num_random, pop_size);
+    fprintf(stdout, "\tSeeded Solutions = [%d] out of [%d]\n", pop_size - num_random, pop_size);
     return pop;
 }
 
@@ -176,115 +176,21 @@ void evolvePopulation(Population * pop, int crossover_type, int mutation_type){
 
 
 
-
-
-void printPopDiversity(Population * pop) {
-    static int old_ind_distance;    // the previously calculated hamming distance between a pair of individuals
-    int ind_distance; // the hamming distance between a pair of individuals
-	int pop_distance; // the sum of the hamming distance between each pair of individuals in the population
-	int sum_hamming;  // sum of the hamming distances of (the hamming distances between two individuals)
-    int hamming_normalizer;
-
-    int *uniqueFitness; // measures if a phenotype (fitness) is unique
-    int sum_unique;
-    double percent_unique;
-    int i, g, j;
-    
-    fprintf(stderr, "WARNING [printPopDiversity] is a test function\n"
-					"Please try to avoid its usage\n");
-    
-    pop_distance = 0;
-    sum_hamming = 0;
-    uniqueFitness = calloc(pop->size, sizeof(int));
-    
-    for(i=0; i < pop->size - 1; i++) {
-		for (j= i+1; j < pop->size; j++) {
-            
-            // calculate the hamming distance between a pair of individuals
-            ind_distance = 0;
-            for (g=0; g < getNumNodes(); g++)
-                if((pop->member[i]).encoding[g] != (pop->member[j]).encoding[g])
-                    ind_distance++;
-            
-            pop_distance = pop_distance + ind_distance;
-            
-            // sum the hamming distance of the hamming distances
-            if ((i != 0) && (j != 1) && (ind_distance != old_ind_distance))
-				sum_hamming++;
-                        
-            // calculate the number of different phenotypes
-            if (abs((pop->member[i]).fitness - (pop->member[j]).fitness) <= ACCEPTABLE_DEVIATION_ERROR)
-                uniqueFitness[j] = 1;
-            
-			old_ind_distance = ind_distance;
-		}
-	}
-    
-    // calculate the percentage of unique individuals in the population
-    sum_unique = 0;
-    for (i=0; i < pop->size; i++)
-        if(uniqueFitness[i] == 0)
-            sum_unique++;
-    percent_unique = (double) sum_unique / pop->size;
-    
-    
-    hamming_normalizer = (pop->size * pop->size * getNumNodes()) / 2.0;
-	fprintf(stdout,"\n\nHammig distance sum [%f] h[%f] --- Unique % -->[%f]\n\n",
-                    (double) pop_distance / hamming_normalizer,
-                    (double) sum_hamming / hamming_normalizer,
-                    percent_unique);
-    
-    free(uniqueFitness);
-}
-
-#define MAX_NUM_TYPES 10 // FIX - make this dynamic!!!
-void printGeneComposition(Population * pop) {
-    int ** occurrence;
-    int num_genes = getNumNodes();
-    int num_types = MAX_NUM_TYPES;   // FIX
-    int g, i, t;
-    
-	fprintf(stderr, "WARNING [printGeneComposition] is a test function\n"
-					"Please try to avoid its usage\n");
-    
-	occurrence = malloc(sizeof(int *) * num_genes);
-    for(i=0; i < num_genes; i++)
-        occurrence[i] = calloc(num_types, sizeof(int));
-        
-    // count the occurrence of each allele
-	for(i=0; i < pop->size; i++)
-        for(g=0; g < num_genes; g++)
-            occurrence[g][(pop->member[i]).encoding[g]]++;
-
-    // print the occurrence data
-	for (g = 0; g < num_genes; g++) {
-		fprintf(stdout,"Gene[%d]---> \t", g);
-        
-		for (t=0; t < getNumArch(getTaskType(g)); t++)
-			fprintf(stdout, "\t[%%%d]",(int)((100 * occurrence[g][t]) / (float) pop->size));
-		fprintf(stdout,"\n");
-	}
-    
-    for(i=0; i < num_genes; i++)
-        free(occurrence[i]);
-    free(occurrence);
-}
-
-
-
-
-
+/******************************************************************************
+ *****************               VISUALIZATION                *****************
+ *****************************************************************************/
 
 void printPopulation(Population * pop){
-    #if (defined VERBOSE || defined DEBUG)
-        int i;
+    int i;
 
-        for (i = 0; i < pop->size; i++)
-            printIndividual(&(pop->member[i]));
-    #endif
-    
+    for (i = 0; i < pop->size; i++)
+        printIndividual(&(pop->member[i]));
+
     printSummaryStatistics(pop);
-//    printPopDiversity(pop);
+    
+#if (defined DIVERSITY)
+    printPopDiversity(pop);
+#endif
 }
 
 void printSummaryStatistics(Population * pop){
@@ -324,4 +230,93 @@ void printSummaryStatistics(Population * pop){
     
 //    // concise version
 //    fprintf(stdout, "Stats : %.5lf,\t%.5lf,\t%d,\t%d\n", mean, sd, min, max);
+}
+
+
+// CREATED BY: Ahmed Al-Wattar
+void printPopDiversity(Population * pop) {
+    static int old_ind_distance;    // the previously calculated ind_distance
+    int ind_distance; // the hamming distance between a pair of individuals
+	int pop_distance; // the sum of the hamming distance between each pair of individuals in the population
+	int sum_hamming;  // sum of the hamming distances of (the hamming distances between two individuals)
+    int hamming_normalizer;
+
+    int *uniqueFitness; // measures if a phenotype (fitness) is unique
+    int sum_unique;
+    double percent_unique;
+    int i, g, j;
+    
+    pop_distance = 0;
+    sum_hamming = 0;
+    uniqueFitness = calloc(pop->size, sizeof(int));
+    
+    for(i=0; i < pop->size - 1; i++) {
+		for (j= i+1; j < pop->size; j++) {
+            
+            // calculate the hamming distance between a pair of individuals
+            ind_distance = 0;
+            for (g=0; g < getNumNodes(); g++)
+                if((pop->member[i]).encoding[g] != (pop->member[j]).encoding[g])
+                    ind_distance++;
+            
+            pop_distance = pop_distance + ind_distance;
+            
+            // sum the hamming distance of the hamming distances
+            if ((i != 0) && (j != 1) && (ind_distance != old_ind_distance))
+				sum_hamming++;
+                        
+            // calculate the number of different phenotypes
+            if (abs((pop->member[i]).fitness - (pop->member[j]).fitness) <= MAX_PHENOTYPE_DEVIATION)
+                uniqueFitness[j] = 1;
+            
+			old_ind_distance = ind_distance;
+		}
+	}
+    
+    // calculate the percentage of unique individuals in the population
+    sum_unique = 0;
+    for (i=0; i < pop->size; i++)
+        if(uniqueFitness[i] == 0)
+            sum_unique++;
+    percent_unique = (double) sum_unique / pop->size;
+    
+    
+    hamming_normalizer = (pop->size * pop->size * getNumNodes()) / 2.0;
+	fprintf(stdout,"\nHammig distance sum [%f] h[%f] --- Unique % -->[%f]\n\n",
+                    (double) pop_distance / hamming_normalizer,
+                    (double) sum_hamming / hamming_normalizer,
+                    percent_unique);
+    
+    free(uniqueFitness);
+}
+
+// CREATED BY: Ahmed Al-Wattar
+#define MAX_NUM_TYPES 10 // FIX - make this dynamic!!!
+void printGeneComposition(Population * pop) {
+    int ** occurrence;
+    int num_genes = getNumNodes();
+    int num_types = MAX_NUM_TYPES;   // FIX
+    int g, i, t;
+    
+	occurrence = malloc(sizeof(int *) * num_genes);
+    for(i=0; i < num_genes; i++)
+        occurrence[i] = calloc(num_types, sizeof(int));
+        
+    // count the occurrence of each allele
+	for(i=0; i < pop->size; i++)
+        for(g=0; g < num_genes; g++)
+            occurrence[g][(pop->member[i]).encoding[g]]++;
+
+    // print the occurrence data
+	for (g = 0; g < num_genes; g++) {
+		fprintf(stdout,"\nGene[%d]---> \t", g);
+        
+		for (t=0; t < getNumArch(getTaskType(g)); t++)
+			fprintf(stdout, "\t[%%%d]",(int)((100 * occurrence[g][t]) / (float) pop->size));
+	}
+    fprintf(stdout, "\n");
+    
+    for(i=0; i < num_genes; i++)
+        free(occurrence[i]);
+    free(occurrence);
 }

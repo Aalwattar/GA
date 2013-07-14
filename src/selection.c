@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : May 30, 2013
+ * Modified : July 13, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -15,11 +15,9 @@
  * Purpose  : A library of selection policies
  ******************************************************************************/
 
-#include "selection.h"
-#include "replacement.h"
-
 #include <stdlib.h>
-#include <limits.h>
+
+#include "selection.h"
 
 
 

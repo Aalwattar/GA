@@ -165,6 +165,7 @@ void evaluateFitness(Individual * ind){
     struct SimResults output;
     int i;
     
+    INIT_FLAGS(input.flags);
     input.noOfNodes = getNumNodes();
     for(i=0; i<input.noOfNodes; i++)
         input.typeData[i] = ind->encoding[i];
@@ -179,9 +180,11 @@ void evaluateFitness(Individual * ind){
     ind->energy = output.power;
     ind->exec_time = output.totalTime;
     ind->num_reuse = output.noOfReuse;
-//    ind->prefetch = output.noOfConfiguration;
-//    // FIX - I don't know if rcSimulator keeps track of this as well :P
-    ind->prefetch = -1;
+    
+    if(OFFLINE_SCHEDULER)
+        ind->prefetch = output.noOfConfiguration;
+    else
+        ind->prefetch = -1;
 }
 
 // DEPRECIATED - for reference purposes only!

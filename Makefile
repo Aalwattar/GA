@@ -6,7 +6,7 @@
 # AUTHOR : Jennifer Winer
 #
 # CREATED : May 21, 2013
-# LAST MODIFIED : July 3, 2013
+# LAST MODIFIED : July 14, 2013
 ###############################################################################
 
 ###############################################################################
@@ -15,19 +15,16 @@
 ## This makefile builds the Genetic Algorithm
 ##
 ## targets:
-##  1. <default>    : compile incrementally and link (no optimization)
-##			print only a summary of each generation
+##  1. <default> : compile incrementally and link with optimization
+##		    print only the final generation
 ##
-##  2. debug	    : no optimization, enable profiling and valgrind options.
-##			enable debug printing functions in the code
+##  2. debug	 : no optimization, enable profiling and valgrind options.
+##		    enable debug printing functions in the code
 ##
-##  3. verbose	    : optimization level 2
-##			enable extra printing from within the GA
+##  3. verbose	 : print every generation
 ##
-##  4. exe	    : optimization level 2
-##			print only the final generation.
-##
-##		    # FIX - LIST THE EXACT THINGS THAT ARE PRINTED
+##  4. stats	 : print ever generation alongside its statistical
+##		    information
 ##
 ###############################################################################
 
@@ -38,11 +35,12 @@ C_FLAGS 	= -std=gnu99 -Wall -pedantic
 DEBUG_FLAGS	= -DDEBUG -g -p -O0
 VERBOSE_FLAGS	= -DVERBOSE -O3
 EXE_FLAGS	= -DEXE -O3 
+DIVERSTITY_FLAGS= -DDIVERSITY -O3
 
 C_INCLUDES   	= -Iinclude -Ilibs
-# FIX - change the following line to be a relative path?
-L_INCLUDES	= -L/home/jennifer/work/GeneticAlgorithm/libs -lrcsSimulator \
-		  -lcommonInterfaces -lm -lofflineScheduler
+
+L_INCLUDES	= -Llibs -lrcsSimulator -lofflineScheduler \
+		  -lcommonInterfaces -lm 
 
 
 #directory names
@@ -84,13 +82,14 @@ run:
 	
 # Creates different versions of the code
 debug   : C_FLAGS += $(DEBUG_FLAGS)
+debug   : L_INCLUDES += -p
 debug   : $(PROG_NAME)
 	
 verbose : C_FLAGS += $(VERBOSE_FLAGS)
 verbose : $(PROG_NAME)
 	
-exe     : C_FLAGS += $(EXE_FLAGS)
-exe     : $(PROG_NAME)
+diversity   : C_FLAGS += $(DIVERSTITY_FLAGS) 
+diversity   : $(PROG_NAME)
 
 ###############################################################################
 

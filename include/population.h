@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 7, 2013
- * Modified : July 12, 2013
+ * Modified : July 13, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -140,8 +140,8 @@ void determineFitness(Population *);
 /******************************************************************************
  * NAME : evaluateRanks
  * 
- * PURPOSE : Orders the individuals in a population in ascending order
- *              based on fitness
+ * PURPOSE : Sorts the individuals of a population in ascending order
+ *              based on their fitnesses
  * ARGUMENTS : Population * = the Population that you wish to evaluate
  *****************************************************************************/
 void sortByFitness(Population *);
@@ -173,7 +173,10 @@ void printPopulation(Population *);
 /******************************************************************************
  * NAME : printSummaryStatistics
  * 
- * PURPOSE : Statistical information about a population. 
+ * PURPOSE : print basic statistical information about a population. This 
+ *              includes the minimum fitness, the maximum fitness, the average
+ *              fitness and the standard deviation of all fitnesses in the
+ *              population
  * ARGUMENTS : Population * = the population that you wish visualize
  *****************************************************************************/
 void printSummaryStatistics(Population *);
@@ -181,17 +184,20 @@ void printSummaryStatistics(Population *);
 /******************************************************************************
  * NAME : printPopDiversity
  * 
- * PURPOSE : print a population's diversity information
+ * PURPOSE : print a population's diversity information. This includes the sum
+ *              of the hamming distances between every pair of individuals, 
+ *              the hamming distance of all of the previously mentioned
+ *              hamming distance, and the number of unique individuals in a
+ *              population.
+ *              
  * ARGUMENTS : Population * = the population that you wish to analyze
- * 
- * RETURNS : the hamming distance of the 
  *****************************************************************************/
 void printPopDiversity(Population *);
 
 /******************************************************************************
  * NAME : printGeneComposition
  * 
- * PURPOSE : Print the occurrence rates for each allele of each gene
+ * PURPOSE : Print the occurrence rates for every allele of each gene
  * ARGUMENTS : Population * = the population that you wish to analyze
  *****************************************************************************/
 void printGeneComposition(Population *);

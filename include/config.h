@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : June 17, 2013
- * Modified : July 10, 2013
+ * Modified : July 14, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -26,7 +26,6 @@
 #define DEFAULT_PRR_FILENAME  "input/prr.conf"
 
 
-// FIX - normalize power + runtime to make them 75:25 instead
 // Fitness weights
 #define DEFAULT_RUNTIME_WEIGHT 0.875
 
@@ -34,14 +33,13 @@
 #define DEFAULT_CROSSOVER_RATE 0.85
 #define DEFAULT_MUTATION_RATE  0.005
 
+// Population Diversity
+#define PERCENT_POP_RANDOM 0.75
+#define MAX_PHENOTYPE_DEVIATION 0
+
 // misc
 #define BUFF_SIZE 500
-
-// AHMED'S STUFF
-#define PERCENT_POP_RANDOM 0.75
-#define ACCEPTABLE_DEVIATION_ERROR 0
-
-#define DEFAULT_SETUP_INDEX 2
+#define DEFAULT_SETUP_INDEX 2 // FIX - remove this if possible ....
 
 #endif	/* CONFIG_H */
 

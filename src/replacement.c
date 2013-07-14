@@ -6,7 +6,7 @@
  *                  for each task's operation
  * 
  * Created  : May 16, 2013
- * Modified : June 23, 2013
+ * Modified : July 13, 2013
  ******************************************************************************/
 
 /*******************************************************************************
@@ -15,11 +15,11 @@
  * PURPOSE : A library of replacement policies
  ******************************************************************************/
 
-#include "replacement.h"
-#include "population.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "replacement.h"
+
 
 
 Population * replaceAll(Population * original, Population * replacements){
@@ -80,4 +80,4 @@ Population * retainBest(Population * original, Population * next_gen){
     return best_pop;
 }
 
-// FUTURE - replace parents instead of replace worst???
+// FUTURE - implement a replacement policy to replace parents instead of replace worst?
