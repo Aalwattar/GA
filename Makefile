@@ -36,11 +36,10 @@ VERBOSE_FLAGS	= -DVERBOSE -O3
 EXE_FLAGS	= -DEXE -O3 
 DIVERSTITY_FLAGS= -DDIVERSITY -O3
 
-C_INCLUDES   	= -Iinclude -Ilibs
+C_INCLUDES     = -Iinclude -Ilibs -I${HOME}/include
 
-L_INCLUDES	= -Llibs -lrcsSimulator -lofflineScheduler \
-		  -lcommonInterfaces -lm 
-
+L_INCLUDES     = -Llibs -L${HOME}/lib -lrcsSimulator -lofflineScheduler \
+                  -lconfuse -lcommonInterfaces -lm
 
 #directory names
 SRC_DIR		= src
