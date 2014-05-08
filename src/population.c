@@ -26,7 +26,6 @@
 #include <limits.h>
 
 static double CROSSOVER_RATE = 0.85;
-static double MUTATION_RATE  = 0.005;
 
 Population * genRandPopulation(int pop_size){
     Population * pop;
@@ -104,21 +103,6 @@ double getCrossoverRate(void){
 }
 
 
-void setMutationRate(double rate){
-    if(0 <= rate && rate <= 1){
-        MUTATION_RATE = rate;
-        return;
-    }
-    
-    fprintf(stderr, "Invalid mutation rate %.3lf.\n", rate);
-    fprintf(stderr, "The mutation rate must be a decimal number between 0 and 1\n");
-    
-    exit(1);
-}
-
-double getMutationRate(void){
-    return MUTATION_RATE;
-}
 
 
 void printPopulation(Population * pop){

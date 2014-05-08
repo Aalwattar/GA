@@ -14,10 +14,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// FIXME - These should be passed in from main, not hard coded values
+// they should NOT have an initial value
+static double MUTATION_RATE  = 0.005;
+// TODO - is this variable unncessary? This information will be hard-coded into the problem statement file (fitness.c)
+static int    NUM_GENES = 0;
+
+static int (*evaluateFitness)(int * genotype);
+static int (*getNumAlleles)(int);
+
 
 // FIXME - NUM_GENES should be localized to ONLY this file
 // FIXME - int getNumAlleles(int);
-// FIXME - int getGeneType(int);
+// FIXME - int getNumGenes();
 // FIXME - find an invalid fitness value to set in newly generated individuals
 
 struct individual{
@@ -25,7 +34,29 @@ struct individual{
 	int fitness;
 };
 
-// Private method that allocates memory for an Individual.
+
+void initIndividualClass(double mutRate, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *)){
+	if(mutRate < 0 || mutRate > 1){
+		fprintf(stderr, "Invalid mutation rate: %.3lf.\n", mutRate);
+		fprintf(stderr, "The mutation rate must be a decimal number between 0 and 1\n");
+		exit(1);
+	}
+
+	if(numGenes <= 0){
+		fprintf(stderr, "Invalid number of genes: %d\n", numGenes);
+		fprintf(stderr, "The number of genes must be greater than zero.\n");
+		exit(1);
+	}
+
+	MUTATION_RATE = mutRate;
+	NUM_GENES = numGenes;
+	getNumAlleles = numAllelesFunc;
+	evaluateFitness = fitnessFunc;
+}
+
+
+// FIXME - add a propper comment
+//  Private method that allocates memory for an Individual.
 // 	it does NOT set default values to its members
 Individual newIndividual(){
 	Individual ind;
@@ -34,7 +65,7 @@ Individual newIndividual(){
 	ind->gene = malloc(sizeof(int) * getNumGenes());
 
 	return ind;
-};
+}
 
 Individual newRandIndividual(){
 	Individual ind;
@@ -42,7 +73,7 @@ Individual newRandIndividual(){
     
     ind = newIndividual();
     for(g=0; g<getNumGenes(); g++)
-        ind->gene[g] = (getNumAlleles(getGeneType(g))) * randomNumber();
+        ind->gene[g] = (getNumAlleles(g)) * randomNumber();
     // ind->fitness = 0;
 
     return ind;
@@ -65,16 +96,12 @@ void freeIndividual(Individual i){
     free(i);
 }
 
-
-
-// FIXME - broken method!!!
-// FIXME - only one of the population / individuals should have access the the mutation rate - NOT BOTH
 void mutate(Individual ind){
     int g;
     
     for(g=0; g<getNumGenes(); g++)
-        if(randomNumber() < getMutationRate())
-            ind->gene[g] = (getNumAlleles(getGeneType(g))) * randomNumber();
+        if(randomNumber() < MUTATION_RATE)
+            ind->gene[g] = (getNumAlleles(g)) * randomNumber();
 }                              
 
 void crossover(Individual ind1, Individual ind2){

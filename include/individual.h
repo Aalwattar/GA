@@ -20,10 +20,16 @@ typedef struct individual * Individual;
  ******************         INDIVIDUAL MANIPULATION         *******************
  *****************************************************************************/
 
+// FIXME - comment here
+// this function sets up the static "class" variables such as the fitness
+// 		function and the mutation rate
+void initIndividualClass(double mutRate, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *));
+
+
 /******************************************************************************
  * NAME : newRandIndividual
  *
- * PURPOSE : Initializes an individual with a randomly generated genotype
+ * PURPOSE : Creates an individual with a randomly generated genotype
  *****************************************************************************/
 Individual newRandIndividual(void);
 

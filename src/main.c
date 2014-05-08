@@ -15,7 +15,6 @@
  * Purpose  : Contains main and executes the GA
  ******************************************************************************/
 
-#include "fitness.h"
 #include "selection.h"
 #include "replacement.h"
 
