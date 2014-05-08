@@ -24,10 +24,7 @@ static int (*evaluateFitness)(int * genotype);
 static int (*getNumAlleles)(int);
 
 
-// FIXME - NUM_GENES should be localized to ONLY this file
-// FIXME - int getNumAlleles(int);
-// FIXME - int getNumGenes();
-// FIXME - find an invalid fitness value to set in newly generated individuals
+
 
 struct individual{
 	int * gene;
@@ -58,11 +55,13 @@ void initIndividualClass(double mutRate, int numGenes, int (*numAllelesFunc)(int
 // FIXME - add a propper comment
 //  Private method that allocates memory for an Individual.
 // 	it does NOT set default values to its members
+
+// FIXME - find an invalid fitness value to set in newly generated individuals
 Individual newIndividual(){
 	Individual ind;
 
 	ind = (Individual) malloc(sizeof(struct individual));
-	ind->gene = malloc(sizeof(int) * getNumGenes());
+	ind->gene = malloc(sizeof(int) * NUM_GENES);
 
 	return ind;
 }
@@ -72,7 +71,7 @@ Individual newRandIndividual(){
     int g;
     
     ind = newIndividual();
-    for(g=0; g<getNumGenes(); g++)
+    for(g=0; g<NUM_GENES; g++)
         ind->gene[g] = (getNumAlleles(g)) * randomNumber();
     // ind->fitness = 0;
 
@@ -84,7 +83,7 @@ Individual duplicateIndividual(Individual original){
     int g;
     
     copy = newIndividual();
-    for(g=0; g<getNumGenes(); g++)
+    for(g=0; g<NUM_GENES; g++)
         copy->gene[g] = original->gene[g];
     // copy->fitness = original->fitness;
 
@@ -99,7 +98,7 @@ void freeIndividual(Individual i){
 void mutate(Individual ind){
     int g;
     
-    for(g=0; g<getNumGenes(); g++)
+    for(g=0; g<NUM_GENES; g++)
         if(randomNumber() < MUTATION_RATE)
             ind->gene[g] = (getNumAlleles(g)) * randomNumber();
 }                              
@@ -110,11 +109,11 @@ void crossover(Individual ind1, Individual ind2){
     int g;
     
     // choose two different "cutting points" FIXME - the English here is atrocious ....
-    gene1 = getNumGenes() * randomNumber();
-    gene2 = getNumGenes() * randomNumber();
+    gene1 = NUM_GENES * randomNumber();
+    gene2 = NUM_GENES * randomNumber();
     
     while(gene1 == gene2)
-        gene2 = getNumGenes() * randomNumber();
+        gene2 = NUM_GENES * randomNumber();
 
     // ensure that gene1 appears before gene2
     if(gene1 > gene2){
@@ -134,6 +133,6 @@ void crossover(Individual ind1, Individual ind2){
 void printIndividual(Individual ind){
     int g;
     
-    for (g = 0; g < getNumGenes(); g++)
+    for (g = 0; g < NUM_GENES; g++)
         fprintf(stdout, "%d", ind->gene[g]);
 }

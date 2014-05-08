@@ -1,36 +1,28 @@
 /*******************************************************************************
+ * Filename : population.h
+ * Purpose  : a header for population.c
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
  * Created  : May 7, 2013
- * Modified : June 6, 2013
+ * Modified : May 8, 2014
  ******************************************************************************/
-
-/*******************************************************************************
- * Filename : population.h
- * 
- * Purpose  : a header for population.c
- ******************************************************************************/
-
-
 
 #ifndef POPULATION_H
 #define	POPULATION_H
 
 #include "individual.h"
 
-typedef struct{
-    Individual * member;
-    int         size;
-}Population;
+typedef struct population * Population;
 
 /******************************************************************************
  ******************         POPULATION MANIPULATION         *******************
  *****************************************************************************/
 
+// FIXME - comment here
+// this function sets up the static "class" variables such as the fitness
+// 		function and the mutation rate
+void initPopulationClass(double crossRate, double mutRate, int popSize, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *));
 
 
 /******************************************************************************
@@ -45,7 +37,7 @@ typedef struct{
  * NOTE : the population that is returned should eventually be freed through
  *              the usage of freePopulation();
  *****************************************************************************/
-Population * genRandPopulation(int);
+Population newRandPopulation();
 
 /******************************************************************************
  * NAME : freePopulation
@@ -56,7 +48,7 @@ Population * genRandPopulation(int);
  * PRECONDITIONS : the Population passed in as a parameter must have been
  *      previously created by genRandPopulation();
  *****************************************************************************/
-void freePopulation(Population *);
+void freePopulation(Population);
 
 
 
@@ -67,7 +59,7 @@ void freePopulation(Population *);
  * ARGUMENTS : Population * = the population that you wish to transform
  *             int = the size of that population;
  *****************************************************************************/
-void evolvePopulation(Population *);
+void evolvePopulation(Population);
 
 
 /******************************************************************************
@@ -76,7 +68,7 @@ void evolvePopulation(Population *);
  * PURPOSE : Calculate the fitness of all members of a population
  * ARGUMENTS : Population * = the population that you wish evaluate
  *****************************************************************************/
-void determineFitness(Population *);
+void determineFitness(Population);
 
 
 
@@ -87,42 +79,7 @@ void determineFitness(Population *);
  *              based on fitness
  * ARGUMENTS : Population * = the Population that you wish to evaluate
  *****************************************************************************/
-void sortByFitness(Population *);
-
-
-
-/******************************************************************************
- * NAME : setCrossoverRate
- * 
- * PURPOSE : a setter for the crossover rate
- * ARGUMENTS : char * = a real number between 0 and 1 
- *****************************************************************************/
-void setCrossoverRate(double);
-
-/******************************************************************************
- * NAME : getCrossoverRate
- * 
- * PURPOSE : getter for the crossover rate 
- * RETURNS : The rate of crossover as a number between 0 and 1
- *****************************************************************************/
-double getCrossoverRate(void);
-
-
-/******************************************************************************
- * NAME : setMutationRate
- * 
- * PURPOSE : a setter for the mutation rate
- * ARGUMENTS : char * = a real number between 0 and 1 
- *****************************************************************************/
-void setMutationRate(double);
-
-/******************************************************************************
- * NAME : getMutationRate
- * 
- * PURPOSE : getter for the mutation rate 
- * RETURNS : The rate of mutation as a number between 0 and 1
- *****************************************************************************/
-double getMutationRate(void);
+void sortByFitness(Population);
 
 
 
@@ -132,7 +89,7 @@ double getMutationRate(void);
  * PURPOSE : Print all chromosomes with their fitness values
  * ARGUMENTS : Population * = the population that you wish visualize
  *****************************************************************************/
-void printPopulation(Population *);
+void printPopulation(Population);
 
 /******************************************************************************
  * NAME : printSummaryStatistics
@@ -140,7 +97,7 @@ void printPopulation(Population *);
  * PURPOSE : Statistical information about a population. 
  * ARGUMENTS : Population * = the population that you wish visualize
  *****************************************************************************/
-void printSummaryStatistics(Population *);
+void printSummaryStatistics(Population);
 
 
 #endif	/* POPULATION_H */

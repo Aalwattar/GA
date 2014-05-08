@@ -28,8 +28,15 @@
 #define AIF_FILENAME  "input/B1_10_5.aif"
 
 static int STOP_CONDITION = 500;
-static int POP_SIZE = 50;
 
+int main(void){
+
+	printf("Hello There!\n");
+	return 0;
+}
+
+
+/*
 
 void initParameters(int, char **);
 void freeParameters(void);
@@ -225,14 +232,4 @@ void freeParameters(void){
     freeNapoleon();
 }
 
-void setPopSize(int size){
-    if(2 <= size && size <= 10000){
-        POP_SIZE = size;
-        return;
-    }
-    
-    fprintf(stderr, "Invalid population size %d.\n", size);
-    fprintf(stderr, "The population size must be an integer between 0 and 1\n");
-    
-    exit(1);
-}
+*/

@@ -89,5 +89,8 @@ void crossover(Individual, Individual);
 void printIndividual(Individual);
 
 
+// FIXME - create getters for fitness
+
+
 #endif	/* INDIVIDUAL_H */
 
