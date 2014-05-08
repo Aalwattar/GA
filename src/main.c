@@ -25,15 +25,6 @@
 #include <stdbool.h>
 #include <getopt.h>
 
-#include <bounds.h>
-#include <types.h>
-#include <ecodes.h>
-#include <napoleon.h>
-#include <io.h>
-#include <ilp.h>
-#include <functions.h>
-#include <main.h>
-
 #define ARCH_FILENAME "input/architecture_library.txt"
 #define AIF_FILENAME  "input/B1_10_5.aif"
 
@@ -246,13 +237,3 @@ void setPopSize(int size){
     
     exit(1);
 }
-
-// COMMENTING TEMPLATE
-/******************************************************************************
- * NAME : initRandGenerator
- * PURPOSE : 
- * ARGUMENTS : 
- * PRECONDITIONS : 
- * RETURNS : 
- * NOTE : 
- *****************************************************************************/

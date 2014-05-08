@@ -4,4 +4,11 @@
 *.exe
 *.stackdump
 
+# Netbeans files
 nbproject/*
+
+# Eclipse files
+.cproject
+.project
+.settings
+

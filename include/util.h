@@ -1,22 +1,21 @@
 /*******************************************************************************
+ * Filename : util.h
+ * Purpose  : a header for util.c
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
  * Created  : May 7, 2013
- * Modified : May 29, 2013
+ * Modified : May 8, 2014
  ******************************************************************************/
 
 /*******************************************************************************
- * Filename : problem.h
+ * Filename : util.h
  * 
- * Purpose  : a header for problem.c
+ * Purpose  : a header for util.c
  ******************************************************************************/
 
-#ifndef PROBLEM_H
-#define	PROBLEM_H
+#ifndef UTIL_H
+#define	UTIL_H
 
 /******************************************************************************
  *****************          RANDOM NUMBER GENERATION          *****************
@@ -51,5 +50,5 @@ double randomNumber(void);
 
 
 
-#endif	/* PROBLEM_H */
+#endif	/* UTIL_H */
 

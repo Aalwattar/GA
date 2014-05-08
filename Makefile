@@ -40,7 +40,7 @@ SRC_DIR			= src
 OBJ_DIR			= obj
 BIN_DIR			= .
 
-OBJS			= $(addprefix $(OBJ_DIR)/,
+OBJS			= $(addprefix $(OBJ_DIR)/, \
                           fitness.o \
                           individual.o \
                           main.o \
@@ -62,7 +62,7 @@ all : $(PROG_NAME)
 	
 clean : 
 	rm -f $(BIN_DIR)/$(PROG_NAME)
-	rm -f $(OBJ_DIR)*
+	rm -f $(OBJ_DIR)/*
 
 run: 
 	./$(PROG_NAME)

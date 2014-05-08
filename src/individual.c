@@ -1,105 +1,112 @@
 /*******************************************************************************
- * Author   : Jennifer Winer
- * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
- * Created  : May 7, 2013
- * Modified : June 6, 2013
- ******************************************************************************/
-
-/*******************************************************************************
  * Filename : Individual.c
- * 
  * Purpose  : All methods for the creation and manipulation of a possible
  *              solution to the problem (an individual in the population)
+ *
+ * Author   : Jennifer Winer
+ * 
+ * Created  : May 7, 2013
+ * Modified : May 8, 2014
  ******************************************************************************/
 
 #include "individual.h"
-#include "fitness.h"
-#include "population.h"
-#include "util.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
 
-void initRandIndividual(Individual * ind){
-    int i;
+// FIXME - NUM_GENES should be localized to ONLY this file
+// FIXME - int getNumAlleles(int);
+// FIXME - int getGeneType(int);
+// FIXME - find an invalid fitness value to set in newly generated individuals
+
+struct individual{
+	int * gene;
+	int fitness;
+};
+
+// Private method that allocates memory for an Individual.
+// 	it does NOT set default values to its members
+Individual newIndividual(){
+	Individual ind;
+
+	ind = (Individual) malloc(sizeof(struct individual));
+	ind->gene = malloc(sizeof(int) * getNumGenes());
+
+	return ind;
+};
+
+Individual newRandIndividual(){
+	Individual ind;
+    int g;
     
-    ind->encoding = malloc(sizeof(int) * getNumGenes());
-    
-    for(i=0; i<getNumGenes(); i++)
-        ind->encoding[i] = (getNumArch(getTaskType(i)) - 1) * randomNumber() + 1;
-    
-    // DOCUMENT  - right now I restrict the GA from choosing any of the GPPs
-    // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
+    ind = newIndividual();
+    for(g=0; g<getNumGenes(); g++)
+        ind->gene[g] = (getNumAlleles(getGeneType(g))) * randomNumber();
+    // ind->fitness = 0;
+
+    return ind;
 }
 
-void freeIndividual(Individual * i){
-    free(i->encoding);
+Individual duplicateIndividual(Individual original){
+	Individual copy;
+    int g;
+    
+    copy = newIndividual();
+    for(g=0; g<getNumGenes(); g++)
+        copy->gene[g] = original->gene[g];
+    // copy->fitness = original->fitness;
+
+    return copy;
 }
 
-void duplicateIndividual(Individual * copy, Individual * original){
-    int i;
-    
-    copy->encoding = malloc(sizeof(int) * getNumGenes());
-    
-    for(i=0; i<getNumGenes(); i++)
-        copy->encoding[i] = original->encoding[i];
+void freeIndividual(Individual i){
+    free(i->gene);
+    free(i);
 }
 
-void mutate(Individual * ind){
-    int i;
+
+
+// FIXME - broken method!!!
+// FIXME - only one of the population / individuals should have access the the mutation rate - NOT BOTH
+void mutate(Individual ind){
+    int g;
     
-    for(i=0; i<getNumGenes(); i++)
+    for(g=0; g<getNumGenes(); g++)
         if(randomNumber() < getMutationRate())
-            ind->encoding[i] = (getNumArch(getTaskType(i)) - 1) * randomNumber() + 1;
-    
-    // DOCUMENT  - right now I restrict the GA from choosing any of the GPPs
-    // ORIGINAL - ind->encoding[i] = getNumArch(getTaskType(i)) * randomNumber();
+            ind->gene[g] = (getNumAlleles(getGeneType(g))) * randomNumber();
 }                              
 
-void crossover(Individual * p1, Individual * p2){
-    int cross1, cross2;
+void crossover(Individual ind1, Individual ind2){
+    int gene1, gene2;
     int temp;
-    int i;
+    int g;
     
-    cross1 = getNumGenes() * randomNumber();
-    cross2 = getNumGenes() * randomNumber();
+    // choose two different "cutting points" FIXME - the English here is atrocious ....
+    gene1 = getNumGenes() * randomNumber();
+    gene2 = getNumGenes() * randomNumber();
     
-    while(cross1 == cross2)
-        cross2 = getNumGenes() * randomNumber();
+    while(gene1 == gene2)
+        gene2 = getNumGenes() * randomNumber();
 
-    if(cross1 > cross2){
-        
-//        // Unnecessary, but fun!
-//        Individual * swap;
-//        swap = p1;
-//        p1 = p2;
-//        p2 = swap;
-        
-        temp = cross1; 
-        cross1 = cross2;
-        cross2 = temp;
+    // ensure that gene1 appears before gene2
+    if(gene1 > gene2){
+        temp = gene1; 
+        gene1 = gene2;
+        gene2 = temp;
     }
-    
-    for(i=cross1; i <= cross2; i++){
-        temp = p1->encoding[i];
-        p1->encoding[i] = p2->encoding[i];
-        p2->encoding[i] = temp;
+
+    // perform crossover for all genes between our two cutting points (inclusive)
+    for(g=gene1; g <= gene2; g++){
+        temp = ind1->gene[g];
+        ind1->gene[g] = ind2->gene[g];
+        ind2->gene[g] = temp;
     }
 }
 
-void printIndividual(Individual * ind){
-//    int i;
-//    
-//    // print the chromosome
-//    for (i = 0; i < getNumGenes(); i++)
-//        fprintf(stdout, "%d", ind->encoding[i]);
+void printIndividual(Individual ind){
+    int g;
     
-    // Napoleon information
-    fprintf(stdout, "fitness = %d\truntime = %d\tprefetch = %d\tpower = %d\treuse = %d\n", 
-                ind->fitness, ind->exec_time, ind->prefetch, ind->energy, ind->num_reuse);
+    for (g = 0; g < getNumGenes(); g++)
+        fprintf(stdout, "%d", ind->gene[g]);
 }

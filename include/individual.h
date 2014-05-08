@@ -1,78 +1,51 @@
 /*******************************************************************************
+ * Filename : individual.h
+ * Purpose  : a header for individual.c
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
  * Created  : May 7, 2013
- * Modified : May 30, 2013
+ * Modified : May 8, 2014
  ******************************************************************************/
-
-/*******************************************************************************
- * Filename : individual.h
- * 
- * Purpose  : a header for individual.c
- ******************************************************************************/
-
 
 #ifndef INDIVIDUAL_H
 #define	INDIVIDUAL_H
 
 #include "util.h"
 
-typedef struct{
-    int * encoding;     // their genotype
-                        // This is 2 longer then the number of tasks
-                                // The second last integer = The areas distribution of PRRs
-                                // The last integer = the number of PRRs
-    
-    int fitness;
-    int exec_time;
-    int energy;
-    
-    int num_reuse;
-    int prefetch;
-} Individual;
+
+typedef struct individual * Individual;
 
 /******************************************************************************
  ******************         INDIVIDUAL MANIPULATION         *******************
  *****************************************************************************/
 
 /******************************************************************************
- * NAME : initRandIndividual
- * 
- * PURPOSE : Initializes an individual with randomly generated genes
- * ARGUMENTS : Individual * = the individual to initialize
- * 
- * PRECONDITIONS : the Individual struct must already exist in memory
+ * NAME : newRandIndividual
+ *
+ * PURPOSE : Initializes an individual with a randomly generated genotype
  *****************************************************************************/
-void initRandIndividual(Individual *);
+Individual newRandIndividual(void);
+
 
 /******************************************************************************
- * NAME : duplicateIndividual
+ * NAME : cloneIndividual
  * 
  * PURPOSE : Creates a deep copy of the individual passed in as an argument 
- * ARGUMENTS : Individual * = the destination for the copy
- *             Individual * = the individual that you wish to copy
- * 
- * PRECONDITIONS : the Individuals passed in as a second parameter must have
- *      been previously created either through initRandIndividual() or 
- *      duplicateIndividual().
  *****************************************************************************/
-void duplicateIndividual(Individual *, Individual *);
+Individual cloneIndividual(Individual);
+
 
 /******************************************************************************
  * NAME : freeIndividual
  * 
  * PURPOSE : Frees all dynamically allocated data from within an Individual
- * ARGUMENTS : Individual * = the individual that you wish to free
  * 
  * PRECONDITIONS : the Individual passed in as a parameter must have been
- *      previously created either through initRandIndividual() or 
- *      duplicateIndividual().
+ *      previously created either through newRandIndividual() or
+ *      cloneIndividual().
  *****************************************************************************/
-void freeIndividual(Individual *);
+void freeIndividual(Individual);
 
 
 
@@ -81,13 +54,12 @@ void freeIndividual(Individual *);
  * 
  * PURPOSE : Perform mutation on an Individual. The probability of mutating one
  *      individual gene (MUTATION_RATE) is pre-determined by the user.
- * ARGUMENTS : Individual * = the Individual that you wish to mutate
  * 
- * PRECONDITIONS : the Individual passed in as a parameter must have been
- *      previously created either through initRandIndividual() or 
- *      duplicateIndividual().
+ * RECONDITIONS : the Individual passed in as a parameter must have been
+ *      previously created either through newRandIndividual() or
+ *      cloneIndividual().
  *****************************************************************************/
-void mutate(Individual *);
+void mutate(Individual);
 
 /******************************************************************************
  * NAME : crossover
@@ -95,17 +67,21 @@ void mutate(Individual *);
  * PURPOSE : Perform crossover on the two individuals provided. The probability
  *       of mutating one individual gene (CROSSOVER_RATE) is pre-determined by
  *       the user.
- * ARGUMENTS : Individual * = the first individual that will undergo crossover
- *             Individual * = the second individual that will undergo crossover
  * 
- * PRECONDITIONS : the Individuals passed in as a parameter must have been
- *      previously created either through initRandIndividual() or 
- *      duplicateIndividual().
+ * RECONDITIONS : the Individual passed in as a parameter must have been
+ *      previously created either through newRandIndividual() or
+ *      cloneIndividual().
  *****************************************************************************/
-void crossover(Individual *, Individual *);
+void crossover(Individual, Individual);
 
 
-void printIndividual(Individual *);
+/******************************************************************************
+ * NAME : printIndividual
+ *
+ * PURPOSE : Display the genotype of an individual
+ *****************************************************************************/
+void printIndividual(Individual);
+
 
 #endif	/* INDIVIDUAL_H */
 

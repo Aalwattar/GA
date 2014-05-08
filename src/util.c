@@ -1,18 +1,11 @@
 /*******************************************************************************
+ * Filename : util.c
+ * Purpose  : library for utility functions such as random number generation
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
  * Created  : May 7, 2013
- * Modified : May 29, 2013
- ******************************************************************************/
-
-/*******************************************************************************
- * Filename : problem.c
- * 
- * Purpose  : library for utility functions such as random number generation
+ * Modified : May 8, 2014
  ******************************************************************************/
 
 #include "util.h"
