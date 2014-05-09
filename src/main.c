@@ -17,6 +17,7 @@
 
 #include "selection.h"
 #include "replacement.h"
+#include "fitness.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +31,13 @@
 static int STOP_CONDITION = 500;
 
 int main(void){
+	Population pop;
 
-	printf("Hello There!\n");
+	initPopulationClass(0.80, 0.075, 50 , getNumGenes(), &getNumAlleles, &evaluateFitness);
+	pop = newRandPopulation();
+	determineFitness(pop);
+
+	printPopulation(pop);
 	return 0;
 }
 

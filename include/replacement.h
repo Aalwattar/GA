@@ -1,18 +1,11 @@
 /*******************************************************************************
+ * Filename : replacement.h
+ * Purpose  : a header for replacement.c
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
  * Created  : May 16, 2013
- * Modified : June 6, 2013
- ******************************************************************************/
-
-/*******************************************************************************
- * Filename : replacement.h
- * 
- * Purpose  : a header for replacement.c
+ * Modified : May 8, 2014
  ******************************************************************************/
 
 
@@ -25,18 +18,19 @@
  * NAME : replaceWorst
  * 
  * PURPOSE : Replaces the worst individuals in one population with 
- *              the best individuals from another population
- *              another
- * ARGUMENTS : Population * = the destination population
- *             Population * = the source population
+ *              the best individuals from another
+ *
+ * ARGUMENTS : Population = the destination population
+ *             Population = the source population
  *             int = the number of individuals that you wish to replace
  * 
  * PRECONDITIONS : Both populations must have already had the fitnesses of
- *                      all of their members evaluated (through evaluateFitness)
+ *                      their members evaluated (by a previous call to the
+ *                      function evaluateFitness)
  * 
  * NOTE : This algorithm sorts each of the populations according to fitness
  *****************************************************************************/
-void replaceWorst(Population *, Population *, int);
+void replaceWorst(Population, Population, int);
 
 #endif	/* REPLACEMENT_H */
 

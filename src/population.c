@@ -78,24 +78,29 @@ void freePopulation(Population pop){
     free(pop);
 }
 
+void freeMember(Population pop, int ind){
+	freeIndividual(pop->member[ind]);
+}
+
 
 
 void determineFitness(Population pop){
     int i;
     
     for (i = 0; i < POP_SIZE; i++)
-        evaluateFitness(&(pop->member[i]));
+        calculateFitness(pop->member[i]);
     // 	FIXME - make evaluateFitness wrapper for Individual class?
 }
 
 
-// PRIVATE - The compare function for qsort
-int compareIndividuals(const void * p1, const void * p2){
-    return getFitness(p1) - getFitness(p2);
-}
+
 
 void sortByFitness(Population pop){
     qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividuals);
+}
+
+void sortByReverseFitness(Population pop){
+    qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividualsReversed);
 }
 
 
@@ -119,8 +124,10 @@ void evolvePopulation(Population pop){
 void printPopulation(Population pop){
     int i;
 
-    for (i = 0; i < POP_SIZE; i++)
+    for (i = 0; i < POP_SIZE; i++){
+    	printf("\n%2d) ", i+1);
         printIndividual(pop->member[i]);
+    }
     
     printSummaryStatistics(pop);
 }

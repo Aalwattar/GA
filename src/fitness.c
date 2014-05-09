@@ -13,16 +13,26 @@
 #include "individual.h"
 
 #define BUFF_SIZE 500
-
+#define NUM_GENES 10
 
 // FIXME - explain that these are example implementations only
 int getNumGenes(void){
-	return 1;
+	return NUM_GENES;
 }
 
 int getNumAlleles(int position){
-	if(position == 0)
-		return 1;
+	static int numAlleles[] = {4, 7, 2, 6, 9, 1, 2, 6, 3, 1};
 
-	return 0;
+	return numAlleles[position];
+}
+
+int evaluateFitness(int * gene){
+	int sum, i;
+
+	sum = 0;
+	for(int i=0; i<NUM_GENES; i++){
+		sum = sum + gene[i];
+	}
+
+	return sum;
 }

@@ -26,11 +26,9 @@ void initPopulationClass(double crossRate, double mutRate, int popSize, int numG
 
 
 /******************************************************************************
- * NAME : genRandPopulation
- * 
+ * NAME : newRandPopulation
  * PURPOSE : Creates a population of individuals. Each individual will
  *              contain randomly generated genes, but is still a valid solution
- * ARGUMENTS : int = the number of individuals in the population
  * 
  * RETURNS : A population of randomly generated individuals
  * 
@@ -41,61 +39,52 @@ Population newRandPopulation();
 
 /******************************************************************************
  * NAME : freePopulation
- * 
  * PURPOSE : Frees all dynamically allocated data from within a Population
- * ARGUMENTS : Population * = the population that you wish to free
  * 
  * PRECONDITIONS : the Population passed in as a parameter must have been
- *      previously created by genRandPopulation();
+ *      previously created by newRandPopulation();
  *****************************************************************************/
 void freePopulation(Population);
 
 
-
 /******************************************************************************
  * NAME : evolvePopulation
- * 
  * PURPOSE : Perform recombination and mutation on the provided Population
- * ARGUMENTS : Population * = the population that you wish to transform
- *             int = the size of that population;
  *****************************************************************************/
 void evolvePopulation(Population);
 
 
 /******************************************************************************
  * NAME : determineFitness
- * 
  * PURPOSE : Calculate the fitness of all members of a population
- * ARGUMENTS : Population * = the population that you wish evaluate
  *****************************************************************************/
 void determineFitness(Population);
 
 
 
 /******************************************************************************
- * NAME : evaluateRanks
- * 
- * PURPOSE : Orders the individuals in a population in ascending order
- *              based on fitness
- * ARGUMENTS : Population * = the Population that you wish to evaluate
+ * NAME : sortByFitness
+ * PURPOSE : Orders the individuals in a population in ascending order by
+ *              their fitness
  *****************************************************************************/
 void sortByFitness(Population);
 
-
+/******************************************************************************
+ * NAME: sortByReverseFitness
+ * PURPOSE: Orders the individuals in a population in descending order by
+ * 				their fitness
+ *****************************************************************************/
+void sortByReversedFitness(Population);
 
 /******************************************************************************
  * NAME : printPopulation
- * 
- * PURPOSE : Print all chromosomes with their fitness values
- * ARGUMENTS : Population * = the population that you wish visualize
+ * PURPOSE : Print every individual's genotype with their fitness values
  *****************************************************************************/
 void printPopulation(Population);
 
 /******************************************************************************
  * NAME : printSummaryStatistics
- * 
- * PURPOSE : Statistical information about a population. 
- * ARGUMENTS : Population * = the population that you wish visualize
+ * PURPOSE : Print statistical information about a population to stdout
  *****************************************************************************/
 void printSummaryStatistics(Population);
 

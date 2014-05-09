@@ -22,6 +22,7 @@
 #include <limits.h>
 
 
+/*
 
 Population * tournamentSelection(Population * original, int pop_size){
     Population * mating_pool;
@@ -82,3 +83,6 @@ Individual * findBest(Population * pop){
     
     return &(pop->member[best_index]);
 }
+
+
+*/

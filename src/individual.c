@@ -95,6 +95,20 @@ void freeIndividual(Individual i){
     free(i);
 }
 
+int getFitness(Individual ind){
+	return ind->fitness;
+}
+
+// the compare function for qsort
+int compareIndividuals(const void * p1, const void * p2){
+    return ((Individual)p1)->fitness - ((Individual)p2)->fitness;
+}
+
+// the compare function for qsort
+int compareIndividualsReversed(const void * p1, const void * p2){
+    return ((Individual)p2)->fitness - ((Individual)p1)->fitness;
+}
+
 void mutate(Individual ind){
     int g;
     
@@ -135,4 +149,8 @@ void printIndividual(Individual ind){
     
     for (g = 0; g < NUM_GENES; g++)
         fprintf(stdout, "%d", ind->gene[g]);
+}
+
+void calculateFitness(Individual ind){
+	ind->fitness = evaluateFitness(ind->gene);
 }

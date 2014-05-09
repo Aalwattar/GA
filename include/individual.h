@@ -54,6 +54,14 @@ Individual cloneIndividual(Individual);
 void freeIndividual(Individual);
 
 
+// FIXME - needs a comment
+int getFitness(Individual);
+
+// FIXME - needs commenting
+int compareIndividuals(const void *, const void *);
+int compareIndividualsReversed(const void *, const void *);
+
+
 
 /******************************************************************************
  * NAME : mutate
@@ -88,9 +96,8 @@ void crossover(Individual, Individual);
  *****************************************************************************/
 void printIndividual(Individual);
 
-
-// FIXME - create getters for fitness
-
+// FIXME - needs a comment
+void calculateFitness(Individual);
 
 #endif	/* INDIVIDUAL_H */
 

@@ -33,7 +33,7 @@
  * RETURNS : A Population that contains deep copies of all of the winners from 
  *              the requested number of tournaments. 
  *****************************************************************************/
-Population * tournamentSelection(Population *, int);
+//Population tournamentSelection(Population, int);
 
 
 /******************************************************************************
@@ -46,7 +46,7 @@ Population * tournamentSelection(Population *, int);
  * RETURNS : A Population that contains deep copies of all of the winners from 
  *              the requested number of tournaments. 
  *****************************************************************************/
-Population * randomSelection(Population *, int);
+//Population randomSelection(Population, int);
 
 
 /******************************************************************************
@@ -57,7 +57,7 @@ Population * randomSelection(Population *, int);
  * 
  * RETURNS : a pointer to the individual with the best fitness
  *****************************************************************************/
-Individual * findBest(Population *);
+//Individual findBest(Population);
 
 
 #endif	/* SELECTION_H */
