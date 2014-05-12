@@ -15,6 +15,11 @@
 #define BUFF_SIZE 500
 #define NUM_GENES 10
 
+
+void initProblem(char * filename){
+
+}
+
 // FIXME - explain that these are example implementations only
 int getNumGenes(void){
 	return NUM_GENES;

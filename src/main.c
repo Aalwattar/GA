@@ -24,27 +24,27 @@
 #include <stdbool.h>
 #include <getopt.h>
 
-#define ARCH_FILENAME "input/architecture_library.txt"
-#define AIF_FILENAME  "input/B1_10_5.aif"
+#define PROBLEM_FILENAME "input/problem.txt"
 
-static int STOP_CONDITION = 10;
-static int DEFAULT_POP_SIZE = 50;
+static int STOP_CONDITION = 500;
 
-int main(void){
-	Population pop, selected;
+
+void initParameters(int, char **);
+
+void generationalGA(Population);
+void elitestGA(Population);
+
+// FUTURE - implement this
+bool populationConverged(Population * pop);
+
+
+int main(int argc, char * argv[]){
+	Population pop;
 	Individual best_solution;
-	int half_pop;
-	int generation_num = 0;
 
-	initPopulationClass(0.80, 0.075, DEFAULT_POP_SIZE , getNumGenes(), &getNumAlleles, &evaluateFitness);
-
-	if(DEFAULT_POP_SIZE % 2 == 0)
-		half_pop = DEFAULT_POP_SIZE / 2;
-	else
-		half_pop = (DEFAULT_POP_SIZE / 2) + 1;
+    initParameters(argc, argv);
 
 	pop = newRandPopulation();
-
 #ifdef VERBOSE
 	fprintf(stdout, "\n----------------------------------------------------------\n\n");
 	fprintf(stdout, "Starting Population:\n");
@@ -52,23 +52,8 @@ int main(void){
 	printPopulation(pop);
 #endif
 
-	while(generation_num < STOP_CONDITION){
-		determineFitness(pop);
-
-#if (defined VERBOSE || defined EXE)
-		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
-		printPopulation(pop);
-#endif
-
-		selected = tournamentSelection(pop);
-		evolvePopulation(selected);
-		determineFitness(selected);
-
-		replaceWorst(pop, selected, half_pop);
-		freePopulation(selected);
-
-		generation_num++;
-	}
+	//elitestGA(pop);
+	generationalGA(pop);
 
 #ifdef VERBOSE
 	fprintf(stdout, "\nFinal Population:\n");
@@ -82,102 +67,36 @@ int main(void){
 	printIndividual(best_solution);
 
 	freePopulation(pop);
-
-	return 0;
-}
-
-
-/*
-
-void initParameters(int, char **);
-void freeParameters(void);
-void setPopSize(int);
-
-void generationalGA(void);
-void elitestGA(void);
-
-// FUTURE - implement this
-bool populationConverged(Population * pop);
-
-
-int main(int argc, char * argv[]){
-    initParameters(argc, argv);
-    
-    // FIX - for now, change this to the preferred algorithm
-    generationalGA();
-    // elitestGA();
-    
-    freeParameters();
     return EXIT_SUCCESS;
 }
 
 
-void elitestGA(void){
-    Population * pop, * selected;
-    Individual * best_solution;
-    int half_pop;
-    int generation_num = 0;
+void elitestGA(Population pop){
+	Population selected;
+	int generation_num = 0;
 
-    half_pop = POP_SIZE / 2;
-    if(POP_SIZE % 2 == 1)
-        half_pop++;
-    
-    pop = genRandPopulation(POP_SIZE);
-
-#ifdef VERBOSE
-    fprintf(stdout, "\n----------------------------------------------------------\n\n");
-    fprintf(stdout, "Starting Population:\n");
-    determineFitness(pop);
-    printPopulation(pop);
-#endif
-
-    while(generation_num < STOP_CONDITION){
-        determineFitness(pop);
+	while(generation_num < STOP_CONDITION){
+		determineFitness(pop);
 
 #if (defined VERBOSE || defined EXE)
-        fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
-        printPopulation(pop);
+		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
+		printPopulation(pop);
 #endif
 
-        selected = tournamentSelection(pop, pop->size);
-        evolvePopulation(selected);
-        determineFitness(selected);
+		selected = tournamentSelection(pop);
+		evolvePopulation(selected);
+		determineFitness(selected);
 
-        replaceWorst(pop, selected, half_pop);
-        freePopulation(selected);
+		replaceWorst(pop, selected);
+		freePopulation(selected);
 
-        generation_num++;
-    }
-
-#ifdef VERBOSE
-    fprintf(stdout, "\nFinal Population:\n");
-    determineFitness(pop);
-    printPopulation(pop);
-#endif
-
-    fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
-    best_solution = findBest(pop);
-    evaluateFitness(best_solution);
-    printIndividual(best_solution);
-
-    freePopulation(pop);
+		generation_num++;
+	}
 }
 
-
-
-void generationalGA(void){
-    Population * pop, * selected;
-    Individual * best_solution;
-    int generation_num = 0;
-    
-    pop = genRandPopulation(POP_SIZE);
-
-    #ifdef VERBOSE
-        fprintf(stdout, "\n----------------------------------------------------------\n\n");
-        fprintf(stdout, "Starting Population:\n");
-        determineFitness(pop);
-        printPopulation(pop);
-    #endif
+void generationalGA(Population pop){
+	Population selected;
+	int generation_num = 0;
 
     while(generation_num < STOP_CONDITION){
         determineFitness(pop);
@@ -187,7 +106,7 @@ void generationalGA(void){
             printPopulation(pop);
         #endif
         
-        selected = tournamentSelection(pop, pop->size);
+        selected = tournamentSelection(pop);
         evolvePopulation(selected);
         
         freePopulation(pop);
@@ -195,48 +114,34 @@ void generationalGA(void){
         
         generation_num++;
     }
-
-    #ifdef VERBOSE
-        fprintf(stdout, "\nFinal Population:\n");
-        determineFitness(pop);
-        printPopulation(pop);
-    #endif
-    
-    fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
-    determineFitness(pop);
-    best_solution = findBest(pop);
-    printIndividual(best_solution);
-    
-    freePopulation(pop);
 }
 
 void initParameters(int argc, char ** argv){
-    char * arch_filename = ARCH_FILENAME;
-    char * aif_filename = AIF_FILENAME;
+    char * problem_filename = PROBLEM_FILENAME;
+    double crossover_rate = 0.8;
+    double mutation_rate  = 0.05;
+    int pop_size = 50;
     int seed = randSeed();
     int c;
 
     opterr = 0;
 
-    while((c = getopt(argc, argv, "a:c:d:g:m:p:r:s:t:")) != -1){
+    while((c = getopt(argc, argv, "c:g:i:m:p:r:s:t:")) != -1){
         switch(c){
-            case 'a':
-                arch_filename = optarg;
-                break;
             case 'c':
-                setCrossoverRate(atof(optarg));
-                break;
-            case 'd':
-                aif_filename = optarg;
+            	crossover_rate = atof(optarg);
                 break;
             case 'g':
                 STOP_CONDITION = atoi(optarg);
                 break;
+            case 'i':
+				problem_filename = optarg;
+				break;
             case 'm':
-                setMutationRate(atof(optarg));
+                mutation_rate = atof(optarg);
                 break;
             case 'p':
-                setPopSize(atoi(optarg));
+                pop_size = atoi(optarg);
                 break;
             case 'r':
                 // FIX - REPLACEMENT METHOD = generatinoal or replaceWorst with varying parameters
@@ -244,7 +149,6 @@ void initParameters(int argc, char ** argv){
             case 's':
                 // FIX - SELECTION METHOD = tournament selection or random
                 break;
-                
             case 't':
                 seed = atoi(optarg);
                 break;
@@ -267,21 +171,13 @@ void initParameters(int argc, char ** argv){
     
     // FIX - Check the return values
     seedRandGenerator(seed);
-    initArchLibrary(arch_filename);
-    initNapoleon(aif_filename);
+    initProblem(problem_filename);
+    initPopulationClass(crossover_rate, mutation_rate, pop_size, getNumGenes(), &getNumAlleles, &evaluateFitness);
 
     fprintf(stdout, "Parameters:\n");
     fprintf(stdout, "\tSeed = %d\n\n", seed);
-    fprintf(stdout, "\tPopulation Size       = %d\n", POP_SIZE);
+    fprintf(stdout, "\tPopulation Size       = %d\n", pop_size);
     fprintf(stdout, "\tNumber of Generations = %d\n\n", STOP_CONDITION);
-    fprintf(stdout, "\tMutation Rate  = %.4lf\n", getMutationRate());
-    fprintf(stdout, "\tCrossover Rate = %.4lf\n\n", getCrossoverRate());
+    fprintf(stdout, "\tMutation Rate  = %.4lf\n", mutation_rate);
+    fprintf(stdout, "\tCrossover Rate = %.4lf\n\n", crossover_rate);
 }
-
-
-void freeParameters(void){
-    freeArchLibrary();
-    freeNapoleon();
-}
-
-*/

@@ -12,6 +12,8 @@
 #ifndef FITNESS_H
 #define FITNESS_H
 
+void initProblem(char *);
+
 int getNumGenes(void);
 int getNumAlleles(int);
 

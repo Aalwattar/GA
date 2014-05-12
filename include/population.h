@@ -97,7 +97,6 @@ void printSummaryStatistics(Population);
  *
  * ARGUMENTS : Population = the destination population
  *             Population = the source population
- *             int = the number of individuals you want replaced
  *
  * PRECONDITIONS : Both populations must have already had the fitnesses of
 *                  	their members evaluated (by a previous call to the
@@ -105,7 +104,7 @@ void printSummaryStatistics(Population);
  *
  * NOTE : This algorithm sorts each of the populations according to fitness
  *****************************************************************************/
-void replaceWorst(Population, Population, int);
+void replaceWorst(Population, Population);
 
 
 /******************************************************************************

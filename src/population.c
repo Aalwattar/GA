@@ -124,12 +124,11 @@ void printPopulation(Population pop){
     int i;
 
     for (i = 0; i < POP_SIZE; i++){
-    	printf("\n%2d) ", i+1);
+    	printf("%2d) ", i+1);
         printIndividual(pop->member[i]);
-        printf("\t%d", getFitness(pop->member[i]));
     }
     
-    // printSummaryStatistics(pop);
+    printSummaryStatistics(pop);
 }
 
 void printSummaryStatistics(Population pop){
@@ -171,13 +170,19 @@ void printSummaryStatistics(Population pop){
 }
 
 
-void replaceWorst(Population original, Population replacements, int num_replaced){
-    int i;
+void replaceWorst(Population original, Population replacements){
+    int half;
+	int i;
+
+	if(POP_SIZE % 2 == 0)
+		half = POP_SIZE / 2;
+	else
+		half = (POP_SIZE / 2) + 1;
 
     sortByFitness(replacements);
     sortByReversedFitness(original);
 
-    for(i = 0 ; i < num_replaced; i++){
+    for(i = 0 ; i < half; i++){
     	freeMember(original, i);
     	original->member[i] = cloneIndividual(replacements->member[i]);
     }
@@ -185,7 +190,7 @@ void replaceWorst(Population original, Population replacements, int num_replaced
 }
 
 
-
+// FIXME - this method is broken? - CANNOT cause convergence?
 Population tournamentSelection(Population original){
     Population mating_pool;
     int p1, p2;
@@ -196,7 +201,7 @@ Population tournamentSelection(Population original){
         p1 = randomNumber() * POP_SIZE;
         p2 = randomNumber() * POP_SIZE;
 
-        if(getFitness(original->member[p1]) <= getFitness(original->member[p2])){
+        if(compareIndividuals(original->member[p1], original->member[p2]) < 0){
         	mating_pool->member[i] = cloneIndividual(original->member[p1]);
         }else{
         	mating_pool->member[i] = cloneIndividual(original->member[p2]);
@@ -233,7 +238,7 @@ Individual findBest(Population pop){
 
     for(i=1; i < POP_SIZE; i++){
     	currentFitness = getFitness(pop->member[i]);
-        if(currentFitness < best_fitness){
+        if(currentFitness > best_fitness){
             best_fitness = currentFitness;
             best_index = i;
         }

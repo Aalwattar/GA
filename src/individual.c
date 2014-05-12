@@ -148,8 +148,11 @@ void crossover(Individual ind1, Individual ind2){
 void printIndividual(Individual ind){
     int g;
     
+    fprintf(stdout, "\t");
     for (g = 0; g < NUM_GENES; g++)
         fprintf(stdout, "%d", ind->gene[g]);
+    fprintf(stdout, "\tfitness = %d", ind->fitness);
+	printf("\n");
 }
 
 void calculateFitness(Individual ind){
