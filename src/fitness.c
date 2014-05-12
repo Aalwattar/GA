@@ -30,7 +30,7 @@ int evaluateFitness(int * gene){
 	int sum, i;
 
 	sum = 0;
-	for(int i=0; i<NUM_GENES; i++){
+	for(i=0; i<NUM_GENES; i++){
 		sum = sum + gene[i];
 	}
 

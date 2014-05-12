@@ -78,9 +78,9 @@ void mutate(Individual);
 /******************************************************************************
  * NAME : crossover
  * 
- * PURPOSE : Perform crossover on the two individuals provided. The probability
- *       of mutating one individual gene (CROSSOVER_RATE) is pre-determined by
- *       the user.
+ * PURPOSE : Perform two point crossover on the two individuals provided. The
+ * 		probability of mutating one individual gene (CROSSOVER_RATE) is
+ * 		pre-determined by the user.
  * 
  * RECONDITIONS : the Individual passed in as a parameter must have been
  *      previously created either through newRandIndividual() or

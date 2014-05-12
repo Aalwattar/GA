@@ -45,8 +45,6 @@ OBJS			= $(addprefix $(OBJ_DIR)/, \
                           individual.o \
                           main.o \
                           population.o \
-                          replacement.o \
-                          selection.o \
                           util.o)
 
 
@@ -92,3 +90,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(OBJ_DIR)
     
 $(OBJ_DIR) : 
 	mkdir -p $(OBJ_DIR)
+
+test: clean debug
+	valgrind --leak-check=full ./$(PROG_NAME)

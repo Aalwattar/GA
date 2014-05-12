@@ -9,9 +9,8 @@
  * Modified : May 8, 2014
  ******************************************************************************/
 
+#include "individual.h"
 #include "population.h"
-// FIXME - do I need to include individual.h??
-#include "selection.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,7 +98,7 @@ void sortByFitness(Population pop){
     qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividuals);
 }
 
-void sortByReverseFitness(Population pop){
+void sortByReversedFitness(Population pop){
     qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividualsReversed);
 }
 
@@ -112,7 +111,7 @@ void evolvePopulation(Population pop){
         if(randomNumber() < CROSSOVER_RATE)
 			crossover(pop->member[i], pop->member[i + 1]);
     
-    // Analyzing each gene separately is an unneccessarily slow process
+    // Analyzing each gene separately is an unnecessarily slow process
     // TODO - consider applying the mutation rate at the individual level. Then those chosen to "mutate" have some fixed percentage of their genes changed?
     for(i=0; i < POP_SIZE; i++)
         mutate(pop->member[i]);
@@ -127,9 +126,10 @@ void printPopulation(Population pop){
     for (i = 0; i < POP_SIZE; i++){
     	printf("\n%2d) ", i+1);
         printIndividual(pop->member[i]);
+        printf("\t%d", getFitness(pop->member[i]));
     }
     
-    printSummaryStatistics(pop);
+    // printSummaryStatistics(pop);
 }
 
 void printSummaryStatistics(Population pop){
@@ -168,4 +168,76 @@ void printSummaryStatistics(Population pop){
     
 //    // concise version
 //    fprintf(stdout, "Stats : %.5lf,\t%.5lf,\t%d,\t%d\n", mean, sd, min, max);
+}
+
+
+void replaceWorst(Population original, Population replacements, int num_replaced){
+    int i;
+
+    sortByFitness(replacements);
+    sortByReversedFitness(original);
+
+    for(i = 0 ; i < num_replaced; i++){
+    	freeMember(original, i);
+    	original->member[i] = cloneIndividual(replacements->member[i]);
+    }
+
+}
+
+
+
+Population tournamentSelection(Population original){
+    Population mating_pool;
+    int p1, p2;
+    int i;
+
+    mating_pool = newPopulation();
+    for(i = 0; i < POP_SIZE; i++){
+        p1 = randomNumber() * POP_SIZE;
+        p2 = randomNumber() * POP_SIZE;
+
+        if(getFitness(original->member[p1]) <= getFitness(original->member[p2])){
+        	mating_pool->member[i] = cloneIndividual(original->member[p1]);
+        }else{
+        	mating_pool->member[i] = cloneIndividual(original->member[p2]);
+        }
+    }
+    return mating_pool;
+}
+
+
+Population randomSelection(Population original){
+    Population mating_pool;
+    int randInd;
+    int i;
+
+    mating_pool = newPopulation();
+    for(i=0; i < POP_SIZE; i++){
+        randInd = randomNumber() * POP_SIZE;
+        mating_pool->member[i] = cloneIndividual(original->member[randInd]);
+    }
+
+    return mating_pool;
+}
+
+
+
+Individual findBest(Population pop){
+    int best_index;
+    int best_fitness;
+    int currentFitness;
+    int i;
+
+    best_index = 0;
+    best_fitness = getFitness(pop->member[0]);
+
+    for(i=1; i < POP_SIZE; i++){
+    	currentFitness = getFitness(pop->member[i]);
+        if(currentFitness < best_fitness){
+            best_fitness = currentFitness;
+            best_index = i;
+        }
+    }
+
+    return pop->member[best_index];
 }

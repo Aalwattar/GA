@@ -78,14 +78,14 @@ Individual newRandIndividual(){
     return ind;
 }
 
-Individual duplicateIndividual(Individual original){
+Individual cloneIndividual(Individual original){
 	Individual copy;
     int g;
     
     copy = newIndividual();
     for(g=0; g<NUM_GENES; g++)
         copy->gene[g] = original->gene[g];
-    // copy->fitness = original->fitness;
+    	copy->fitness = original->fitness;
 
     return copy;
 }
@@ -101,12 +101,12 @@ int getFitness(Individual ind){
 
 // the compare function for qsort
 int compareIndividuals(const void * p1, const void * p2){
-    return ((Individual)p1)->fitness - ((Individual)p2)->fitness;
+    return (*(Individual *)p2)->fitness - (*(Individual *)p1)->fitness;
 }
 
 // the compare function for qsort
 int compareIndividualsReversed(const void * p1, const void * p2){
-    return ((Individual)p2)->fitness - ((Individual)p1)->fitness;
+    return (*(Individual *)p1)->fitness - (*(Individual *)p2)->fitness;
 }
 
 void mutate(Individual ind){
@@ -116,6 +116,7 @@ void mutate(Individual ind){
         if(randomNumber() < MUTATION_RATE)
             ind->gene[g] = (getNumAlleles(g)) * randomNumber();
 }                              
+
 
 void crossover(Individual ind1, Individual ind2){
     int gene1, gene2;

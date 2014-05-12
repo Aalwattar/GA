@@ -15,8 +15,7 @@
  * Purpose  : Contains main and executes the GA
  ******************************************************************************/
 
-#include "selection.h"
-#include "replacement.h"
+#include "population.h"
 #include "fitness.h"
 
 #include <stdio.h>
@@ -28,16 +27,62 @@
 #define ARCH_FILENAME "input/architecture_library.txt"
 #define AIF_FILENAME  "input/B1_10_5.aif"
 
-static int STOP_CONDITION = 500;
+static int STOP_CONDITION = 10;
+static int DEFAULT_POP_SIZE = 50;
 
 int main(void){
-	Population pop;
+	Population pop, selected;
+	Individual best_solution;
+	int half_pop;
+	int generation_num = 0;
 
-	initPopulationClass(0.80, 0.075, 50 , getNumGenes(), &getNumAlleles, &evaluateFitness);
+	initPopulationClass(0.80, 0.075, DEFAULT_POP_SIZE , getNumGenes(), &getNumAlleles, &evaluateFitness);
+
+	if(DEFAULT_POP_SIZE % 2 == 0)
+		half_pop = DEFAULT_POP_SIZE / 2;
+	else
+		half_pop = (DEFAULT_POP_SIZE / 2) + 1;
+
 	pop = newRandPopulation();
-	determineFitness(pop);
 
+#ifdef VERBOSE
+	fprintf(stdout, "\n----------------------------------------------------------\n\n");
+	fprintf(stdout, "Starting Population:\n");
+	determineFitness(pop);
 	printPopulation(pop);
+#endif
+
+	while(generation_num < STOP_CONDITION){
+		determineFitness(pop);
+
+#if (defined VERBOSE || defined EXE)
+		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
+		printPopulation(pop);
+#endif
+
+		selected = tournamentSelection(pop);
+		evolvePopulation(selected);
+		determineFitness(selected);
+
+		replaceWorst(pop, selected, half_pop);
+		freePopulation(selected);
+
+		generation_num++;
+	}
+
+#ifdef VERBOSE
+	fprintf(stdout, "\nFinal Population:\n");
+	determineFitness(pop);
+	printPopulation(pop);
+#endif
+
+	fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
+	best_solution = findBest(pop);
+	calculateFitness(best_solution);
+	printIndividual(best_solution);
+
+	freePopulation(pop);
+
 	return 0;
 }
 
@@ -60,6 +105,7 @@ int main(int argc, char * argv[]){
     
     // FIX - for now, change this to the preferred algorithm
     generationalGA();
+    // elitestGA();
     
     freeParameters();
     return EXIT_SUCCESS;

@@ -76,6 +76,7 @@ void sortByFitness(Population);
  *****************************************************************************/
 void sortByReversedFitness(Population);
 
+
 /******************************************************************************
  * NAME : printPopulation
  * PURPOSE : Print every individual's genotype with their fitness values
@@ -87,6 +88,60 @@ void printPopulation(Population);
  * PURPOSE : Print statistical information about a population to stdout
  *****************************************************************************/
 void printSummaryStatistics(Population);
+
+/******************************************************************************
+ * NAME : replaceWorst
+ *
+ * PURPOSE : Replaces the worst individuals in one population with
+ *              the best individuals from another
+ *
+ * ARGUMENTS : Population = the destination population
+ *             Population = the source population
+ *             int = the number of individuals you want replaced
+ *
+ * PRECONDITIONS : Both populations must have already had the fitnesses of
+*                  	their members evaluated (by a previous call to the
+ *                  function evaluateFitness)
+ *
+ * NOTE : This algorithm sorts each of the populations according to fitness
+ *****************************************************************************/
+void replaceWorst(Population, Population, int);
+
+
+/******************************************************************************
+ * NAME : tournamentSelection
+ *
+ * PURPOSE : Select individuals from a population based on the the hard
+ *              tournament selection algorithm
+ * ARGUMENTS : Population = The population that you wish to select from
+ *
+ * RETURNS : A Population that contains deep copies of all of the winners from
+ *              the requested number of tournaments.
+ *****************************************************************************/
+Population tournamentSelection(Population);
+
+
+/******************************************************************************
+ * NAME : randomSelection
+ *
+ * PURPOSE : Randomly selects individuals from a population.
+ * ARGUMENTS : Population = The population that you wish to select from
+ *
+ * RETURNS : A Population that contains deep copies of all of the winners from
+ *              the requested number of tournaments.
+ *****************************************************************************/
+Population randomSelection(Population);
+
+
+/******************************************************************************
+ * NAME : findBest
+ *
+ * PURPOSE : Finds the individual with the best fitness
+ * ARGUMENTS : Population = the population that you wish to search
+ *
+ * RETURNS : the index of the individual with the best fitness
+ *****************************************************************************/
+Individual findBest(Population);
 
 
 #endif	/* POPULATION_H */
