@@ -1,10 +1,6 @@
 /*******************************************************************************
- * Filename : fitness.c
- * Purpose  : A library of fitness functions that frame the current problem
- * 				into a representation (genotype) and operations to evaluate
- * 				the feasibility of each representation
- *
- *				This file must be completed by the user
+ * Filename : sampleFitness.c
+ * Purpose  : A quick example of an implementation of fitness.c
  *
  * Author   : Jennifer Winer
  * 
@@ -14,12 +10,28 @@
 
 #include "fitness.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 static int NUM_GENES = -1;
 static int * NUM_ALLELES = NULL;
 
 
 // Initialize the instance of this problem from an input file
 void initProblem(char * filename){
+	/**
+	 * The input file must be formatted as follows:
+	 *	--------------------
+	 *	num_genes
+	 *	num_alleles[0], num_alleles[1], .....
+	 *	--------------------
+	 */
+
+	FILE * fp;
+
+	fp = fopen(filename, "r");
+
+
 	/**
 	 * TODO - Initialize the following variable in here:
 	 *	1) NUM_GENES	= The number of genes in a chromosome
@@ -35,7 +47,6 @@ void initProblem(char * filename){
 	 */
 }
 
-// free any dynamically allocated memory (eg. as used in NUM_ALLELES)
 void freeProblem(void){
 
 }

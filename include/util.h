@@ -4,14 +4,8 @@
  *
  * Author   : Jennifer Winer
  * 
- * Created  : May 7, 2013
- * Modified : May 8, 2014
- ******************************************************************************/
-
-/*******************************************************************************
- * Filename : util.h
- * 
- * Purpose  : a header for util.c
+ * Created  : May  7, 2013
+ * Modified : May 13, 2014
  ******************************************************************************/
 
 #ifndef UTIL_H
@@ -25,9 +19,9 @@
  * NAME : seedRandGenerator
  * 
  * PURPOSE : Initialize the random number generator with a user defined seed
- * ARGUMENTS : int = the seed
+ * ARGUMENTS : seed = the number used to begin the random number generation
  *****************************************************************************/
-void seedRandGenerator(int);
+void seedRandGenerator(int seed);
 
 /******************************************************************************
  * NAME : randSeed

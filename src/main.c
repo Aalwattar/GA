@@ -1,18 +1,11 @@
 /*******************************************************************************
+ * Filename : main.c
+ * Purpose  : Combine population functions into different GAs
+ *
  * Author   : Jennifer Winer
  * 
- * Project  : A DFG Off-Line Task Scheduler for FPGA
- *              - The Genetic Algorithm for determining the ideal implementation
- *                  for each task's operation
- * 
- * Created  : May 7, 2013
- * Modified : May 31, 2013
- ******************************************************************************/
-
-/*******************************************************************************
- * Filename : main.c
- * 
- * Purpose  : Contains main and executes the GA
+ * Created  : May  7, 2013
+ * Modified : May 13, 2014
  ******************************************************************************/
 
 #include "population.h"
@@ -102,7 +95,7 @@ void generationalGA(Population pop){
         determineFitness(pop);
         
         #if  (defined VERBOSE || defined EXE)
-            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
+            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);e
             printPopulation(pop);
         #endif
         

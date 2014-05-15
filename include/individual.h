@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Filename : individual.h
+ * FileName : individual.h
  * Purpose  : a header for individual.c
  *
  * Author   : Jennifer Winer
  * 
- * Created  : May 7, 2013
- * Modified : May 8, 2014
+ * Created  : May  7, 2013
+ * Modified : May 13, 2014
  ******************************************************************************/
 
 #ifndef INDIVIDUAL_H
@@ -17,43 +17,56 @@
 typedef struct individual * Individual;
 
 /******************************************************************************
- ******************         INDIVIDUAL MANIPULATION         *******************
+ ***************         Construction and Initialization        ***************
  *****************************************************************************/
 
-// FIXME - comment here
-// this function sets up the static "class" variables such as the fitness
-// 		function and the mutation rate
-void initIndividualClass(double mutRate, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *));
+/******************************************************************************
+ * Name : initIndividualClass
+ *
+ * Purpose : Initialized the static "class" variables
+ *
+ * Arguments : mutRate = The probably of an individual gene randomly mutating
+ * 			   numGenes = The number of genes in a chromosome
+ * 			   numAllelesFunc = a function that when given the position of a
+ * 			   		gene in the chromosome, returns the number of alleles
+ * 			   		that gene possesses
+ * 			   fitnessFunc = a function that when given a chromosome, will
+ * 			   		return the fitness score of that individual
+ *
+ * NOTE : This algorithm MUST be called before all other methods in this file
+ *****************************************************************************/
+void initIndividualClass(double mutRate, int numGenes,
+		int (*numAllelesFunc)(int gene), int (*fitnessFunc)(int * chromosome));
 
 
 /******************************************************************************
- * NAME : newRandIndividual
+ * Name : newRandIndividual
  *
- * PURPOSE : Creates an individual with a randomly generated genotype
+ * Purpose : Creates an individual with a randomly generated genotype
  *****************************************************************************/
 Individual newRandIndividual(void);
 
 
 /******************************************************************************
- * NAME : cloneIndividual
+ * Name : cloneIndividual
  * 
- * PURPOSE : Creates a deep copy of the individual passed in as an argument 
+ * Purpose : Creates a deep copy of the individual passed in as an argument
  *****************************************************************************/
-Individual cloneIndividual(Individual);
+Individual cloneIndividual(Individual original);
 
 
 /******************************************************************************
- * NAME : freeIndividual
+ * Name : freeIndividual
  * 
- * PURPOSE : Frees all dynamically allocated data from within an Individual
- * 
- * PRECONDITIONS : the Individual passed in as a parameter must have been
- *      previously created either through newRandIndividual() or
- *      cloneIndividual().
+ * Purpose : Frees all dynamically allocated data from within an Individual
  *****************************************************************************/
-void freeIndividual(Individual);
+void freeIndividual(Individual i);
 
 
+
+/******************************************************************************
+ ***************************         Fitness        ***************************
+ *****************************************************************************/
 // FIXME - needs a comment
 int getFitness(Individual);
 
@@ -64,40 +77,41 @@ int compareIndividualsReversed(const void *, const void *);
 
 
 /******************************************************************************
- * NAME : mutate
- * 
- * PURPOSE : Perform mutation on an Individual. The probability of mutating one
- *      individual gene (MUTATION_RATE) is pre-determined by the user.
- * 
- * RECONDITIONS : the Individual passed in as a parameter must have been
- *      previously created either through newRandIndividual() or
- *      cloneIndividual().
+ ************************         Manipulation        *************************
  *****************************************************************************/
-void mutate(Individual);
 
 /******************************************************************************
- * NAME : crossover
+ * Name : mutate
  * 
- * PURPOSE : Perform two point crossover on the two individuals provided. The
- * 		probability of mutating one individual gene (CROSSOVER_RATE) is
- * 		pre-determined by the user.
- * 
- * RECONDITIONS : the Individual passed in as a parameter must have been
- *      previously created either through newRandIndividual() or
- *      cloneIndividual().
- *****************************************************************************/
-void crossover(Individual, Individual);
-
-
-/******************************************************************************
- * NAME : printIndividual
+ * Purpose : Perform point mutation on an Individual.
  *
- * PURPOSE : Display the genotype of an individual
+ * NOTE : This method should be used on every Individual in a population
+ *****************************************************************************/
+void mutate(Individual ind);
+
+/******************************************************************************
+ * Name : crossover
+ * 
+ * Purpose : Perform two point crossover on the two individuals provided.
+ *****************************************************************************/
+void crossover(Individual ind1, Individual ind2);
+
+
+
+/******************************************************************************
+ **************************         Display        ****************************
+ *****************************************************************************/
+
+/******************************************************************************
+ * Name : printIndividual
+ *
+ * Purpose : Print the genotype and fitness of an individual to stdout
  *****************************************************************************/
 void printIndividual(Individual);
 
-// FIXME - needs a comment
-void calculateFitness(Individual);
-
 #endif	/* INDIVIDUAL_H */
+
+
+
+
 
