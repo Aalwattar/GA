@@ -23,32 +23,57 @@ void initProblem(char * filename){
 	 * The input file must be formatted as follows:
 	 *	--------------------
 	 *	num_genes
-	 *	num_alleles[0], num_alleles[1], .....
+	 *	num_alleles[0]
+	 *  num_alleles[1]
+	 * 	.....
+	 *	--------------------
+	 *
+	 *  eg. 
+	 *	--------------------
+	 *	5
+	 *	34
+	 *	9
+	 *	12
+	 *	56
+	 *	4
 	 *	--------------------
 	 */
 
 	FILE * fp;
+	char buffer[128];
+	int i;
 
 	fp = fopen(filename, "r");
+	if(fp == NULL){
+		fprintf(stderr, "Invalid problem file: %s", filename);
+		exit(1);
+	}
 
+	// FIXME - change to fgets
+	fscanf(fp, "%s", buffer);
+	NUM_GENES = atoi(buffer);
+	if(NUM_GENES < 1){
+		fprintf("Invalid number of genes: %s", buffer);
+		exit(1);
+	}
 
-	/**
-	 * TODO - Initialize the following variable in here:
-	 *	1) NUM_GENES	= The number of genes in a chromosome
-	 *
-	 *  2) NUM_ALLELES	= a mapping between the position of the 
-	 *			gene on the chromosome, and the number of possible
-	 *			values it may take.
-	 *
-	 *			eg. NUM_ALLELES[3] = 7 means that the fourth gene
-	 *				on the chromosome has 7 possible solutions
-	 *
-	 *			NOTE: All indices start at 0
-	 */
+	NUM_ALLELES = (int *) malloc(sizeof(int) * NUM_GENES);
+
+	for(int i=0; i<NUM_GENES; i++){
+		fscanf(fp, "%s", buffer);
+		NUM_ALLELES[i] = atoi(buffer);
+
+		if(NUM_ALLELES[i] < 1){
+			fprintf("Gene [%d] had an invalid number of alleles: %s", i+1, buffer);
+			exit(1);
+		}
+	}
+
+	fclose(fp);
 }
 
 void freeProblem(void){
-
+	free(NUM_ALLELES);
 }
 
 
