@@ -5,7 +5,7 @@
  * Author   : Jennifer Winer
  * 
  * Created  : May 16, 2013
- * Modified : May 14, 2014
+ * Modified : May 17, 2014
  ******************************************************************************/
 
 #include "fitness.h"
