@@ -89,5 +89,7 @@ int getNumAlleles(int position){
 
 int evaluateFitness(int * chromosome){
 	// implement this method using the static variables
-	// 		initialized above. 
+	// 		initialized above.
+
+	return 0;
 }

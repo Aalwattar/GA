@@ -13,6 +13,7 @@
  ******************************************************************************/
 
 #include "fitness.h"
+#include <stdio.h>
 
 static int NUM_GENES = -1;
 static int * NUM_ALLELES = NULL;
@@ -54,4 +55,5 @@ int getNumAlleles(int position){
 int evaluateFitness(int * chromosome){
 	// implement this method using the static variables
 	// 		initialized above. 
+	return 0;
 }

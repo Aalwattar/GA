@@ -74,6 +74,8 @@ int getFitness(Individual);
 int compareIndividuals(const void *, const void *);
 int compareIndividualsReversed(const void *, const void *);
 
+//FIXME - DELETE LATER
+void calculateFitness(Individual);
 
 
 /******************************************************************************
