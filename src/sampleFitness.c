@@ -5,7 +5,7 @@
  * Author   : Jennifer Winer
  * 
  * Created  : May 16, 2013
- * Modified : May 14, 2014
+ * Modified : May 17, 2014
  ******************************************************************************/
 
 #include "fitness.h"
@@ -28,7 +28,7 @@ void initProblem(char * filename){
 	 * 	.....
 	 *	--------------------
 	 *
-	 *  eg. 
+	 *  eg.
 	 *	--------------------
 	 *	5
 	 *	34
@@ -53,18 +53,18 @@ void initProblem(char * filename){
 	fscanf(fp, "%s", buffer);
 	NUM_GENES = atoi(buffer);
 	if(NUM_GENES < 1){
-		fprintf("Invalid number of genes: %s", buffer);
+		fprintf(stderr, "Invalid number of genes: %s", buffer);
 		exit(1);
 	}
 
 	NUM_ALLELES = (int *) malloc(sizeof(int) * NUM_GENES);
 
-	for(int i=0; i<NUM_GENES; i++){
+	for(i=0; i<NUM_GENES; i++){
 		fscanf(fp, "%s", buffer);
 		NUM_ALLELES[i] = atoi(buffer);
 
 		if(NUM_ALLELES[i] < 1){
-			fprintf("Gene [%d] had an invalid number of alleles: %s", i+1, buffer);
+			fprintf(stderr, "Gene [%d] had an invalid number of alleles: %s", i+1, buffer);
 			exit(1);
 		}
 	}
@@ -88,8 +88,11 @@ int getNumAlleles(int position){
 
 
 int evaluateFitness(int * chromosome){
-	// implement this method using the static variables
-	// 		initialized above.
+	int sum, i;
 
-	return 0;
+	sum = 0;
+	for(i=0; i<NUM_GENES; i++){
+		sum = sum + chromosome[i];
+	}
+	return sum;
 }

@@ -1,10 +1,6 @@
 /*******************************************************************************
- * Filename : fitness.c
- * Purpose  : A library of fitness functions that frame the current problem
- * 				into a representation (genotype) and operations to evaluate
- * 				the feasibility of each representation
- *
- *				This file must be completed by the user
+ * Filename : sampleFitness.c
+ * Purpose  : A quick example of an implementation of fitness.c
  *
  * Author   : Jennifer Winer
  * 
@@ -13,7 +9,9 @@
  ******************************************************************************/
 
 #include "fitness.h"
+
 #include <stdio.h>
+#include <stdlib.h>
 
 static int NUM_GENES = -1;
 static int * NUM_ALLELES = NULL;
@@ -22,23 +20,60 @@ static int * NUM_ALLELES = NULL;
 // Initialize the instance of this problem from an input file
 void initProblem(char * filename){
 	/**
-	 * TODO - Initialize the following variable in here:
-	 *	1) NUM_GENES	= The number of genes in a chromosome
+	 * The input file must be formatted as follows:
+	 *	--------------------
+	 *	num_genes
+	 *	num_alleles[0]
+	 *  num_alleles[1]
+	 * 	.....
+	 *	--------------------
 	 *
-	 *  2) NUM_ALLELES	= a mapping between the position of the 
-	 *			gene on the chromosome, and the number of possible
-	 *			values it may take.
-	 *
-	 *			eg. NUM_ALLELES[3] = 7 means that the fourth gene
-	 *				on the chromosome has 7 possible solutions
-	 *
-	 *			NOTE: All indices start at 0
+	 *  eg.
+	 *	--------------------
+	 *	5
+	 *	34
+	 *	9
+	 *	12
+	 *	56
+	 *	4
+	 *	--------------------
 	 */
+
+	FILE * fp;
+	char buffer[128];
+	int i;
+
+	fp = fopen(filename, "r");
+	if(fp == NULL){
+		fprintf(stderr, "Invalid problem file: %s", filename);
+		exit(1);
+	}
+
+	// FIXME - change to fgets
+	fscanf(fp, "%s", buffer);
+	NUM_GENES = atoi(buffer);
+	if(NUM_GENES < 1){
+		fprintf(stderr, "Invalid number of genes: %s", buffer);
+		exit(1);
+	}
+
+	NUM_ALLELES = (int *) malloc(sizeof(int) * NUM_GENES);
+
+	for(i=0; i<NUM_GENES; i++){
+		fscanf(fp, "%s", buffer);
+		NUM_ALLELES[i] = atoi(buffer);
+
+		if(NUM_ALLELES[i] < 1){
+			fprintf(stderr, "Gene [%d] had an invalid number of alleles: %s", i+1, buffer);
+			exit(1);
+		}
+	}
+
+	fclose(fp);
 }
 
-// free any dynamically allocated memory (eg. as used in NUM_ALLELES)
 void freeProblem(void){
-
+	free(NUM_ALLELES);
 }
 
 
@@ -53,7 +88,11 @@ int getNumAlleles(int position){
 
 
 int evaluateFitness(int * chromosome){
-	// implement this method using the static variables
-	// 		initialized above. 
-	return 0;
+	int sum, i;
+
+	sum = 0;
+	for(i=0; i<NUM_GENES; i++){
+		sum = sum + chromosome[i];
+	}
+	return sum;
 }

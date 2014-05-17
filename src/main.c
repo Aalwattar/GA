@@ -45,8 +45,8 @@ int main(int argc, char * argv[]){
 	printPopulation(pop);
 #endif
 
-	//elitestGA(pop);
-	generationalGA(pop);
+	elitestGA(pop);
+	//generationalGA(pop);
 
 #ifdef VERBOSE
 	fprintf(stdout, "\nFinal Population:\n");
@@ -95,7 +95,7 @@ void generationalGA(Population pop){
         determineFitness(pop);
         
         #if  (defined VERBOSE || defined EXE)
-            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);e
+            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
             printPopulation(pop);
         #endif
         
