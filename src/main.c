@@ -41,7 +41,6 @@ int main(int argc, char * argv[]){
 #ifdef VERBOSE
 	fprintf(stdout, "\n----------------------------------------------------------\n\n");
 	fprintf(stdout, "Starting Population:\n");
-	determineFitness(pop);
 	printPopulation(pop);
 #endif
 
@@ -50,13 +49,11 @@ int main(int argc, char * argv[]){
 
 #ifdef VERBOSE
 	fprintf(stdout, "\nFinal Population:\n");
-	determineFitness(pop);
 	printPopulation(pop);
 #endif
 
 	fprintf(stdout, "\n-----------------   FINAL RESULT   -----------------\n");
 	best_solution = findBest(pop);
-	calculateFitness(best_solution);
 	printIndividual(best_solution);
 
 	freePopulation(pop);
@@ -69,7 +66,6 @@ void elitestGA(Population pop){
 	int generation_num = 0;
 
 	while(generation_num < STOP_CONDITION){
-		determineFitness(pop);
 
 #if (defined VERBOSE || defined EXE)
 		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
@@ -78,7 +74,6 @@ void elitestGA(Population pop){
 
 		selected = tournamentSelection(pop);
 		evolvePopulation(selected);
-		determineFitness(selected);
 
 		replaceWorst(pop, selected);
 		freePopulation(selected);
@@ -92,7 +87,6 @@ void generationalGA(Population pop){
 	int generation_num = 0;
 
     while(generation_num < STOP_CONDITION){
-        determineFitness(pop);
         
         #if  (defined VERBOSE || defined EXE)
             fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);

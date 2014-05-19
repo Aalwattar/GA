@@ -26,6 +26,11 @@ struct population{
     Individual * member;
 };
 
+
+/******************************************************************************
+ ***************         Construction and Initialization        ***************
+ *****************************************************************************/
+
 void initPopulationClass(double crossRate, double mutRate, int popSize, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *)){
 	if(crossRate < 0 || crossRate > 1){
 		fprintf(stderr, "Invalid crossover rate: %.3lf.\n", crossRate);
@@ -82,25 +87,39 @@ void freeMember(Population pop, int ind){
 }
 
 
+/******************************************************************************
+ ***************************         Fitness        ***************************
+ *****************************************************************************/
 
-void determineFitness(Population pop){
+
+void sortByFitness(Population pop, int popSize){
+    qsort(pop->member, popSize, sizeof(Individual), compareIndividuals);
+}
+
+void sortByReversedFitness(Population pop, int popSize){
+    qsort(pop->member, popSize, sizeof(Individual), compareIndividualsReversed);
+}
+
+Individual findBest(Population pop){
+    int best_index;
+    int best_fitness;
+    int currentFitness;
     int i;
-    
-    for (i = 0; i < POP_SIZE; i++)
-        calculateFitness(pop->member[i]);
-    // 	FIXME - make evaluateFitness wrapper for Individual class?
+
+    best_index = 0;
+    best_fitness = getFitness(pop->member[0]);
+
+    for(i=1; i < POP_SIZE; i++){
+    	currentFitness = getFitness(pop->member[i]);
+        if(currentFitness > best_fitness){
+            best_fitness = currentFitness;
+            best_index = i;
+        }
+    }
+
+    return pop->member[best_index];
 }
 
-
-
-
-void sortByFitness(Population pop){
-    qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividuals);
-}
-
-void sortByReversedFitness(Population pop){
-    qsort(pop->member, POP_SIZE, sizeof(Individual), compareIndividualsReversed);
-}
 
 
 
@@ -119,55 +138,9 @@ void evolvePopulation(Population pop){
 
 
 
-
-void printPopulation(Population pop){
-    int i;
-
-    for (i = 0; i < POP_SIZE; i++){
-    	printf("%2d) ", i+1);
-        printIndividual(pop->member[i]);
-    }
-    
-    printSummaryStatistics(pop);
-}
-
-void printSummaryStatistics(Population pop){
-    double mean;
-    double differenceSum;
-    double sd;
-    
-    int max = 0;
-    int min = INT_MAX;
-    int fitnessSum;
-    int i;
-    
-    fitnessSum = 0;
-    for(i = 0; i < POP_SIZE; i++){
-        fitnessSum = fitnessSum + getFitness(pop->member[i]);
-        
-        if(getFitness(pop->member[i]) > max)
-            max = getFitness(pop->member[i]);
-        
-        if(getFitness(pop->member[i]) < min)
-            min = getFitness(pop->member[i]);
-    }
-    
-    mean = (double) fitnessSum / POP_SIZE;
-    
-    differenceSum = 0;
-    for(i = 0; i < POP_SIZE; i++)
-        differenceSum = differenceSum + pow(mean - getFitness(pop->member[i]), 2);
-    
-    sd = sqrt(differenceSum / POP_SIZE);
-    
-    fprintf(stdout, "\nAverage = %.3lf\n", mean);
-    fprintf(stdout, "SD      = %.3lf\n", sd);
-    fprintf(stdout, "Min     = %d\n", min);
-    fprintf(stdout, "Max     = %d\n", max);
-    
-//    // concise version
-//    fprintf(stdout, "Stats : %.5lf,\t%.5lf,\t%d,\t%d\n", mean, sd, min, max);
-}
+/******************************************************************************
+ ************************         Manipulation        *************************
+ *****************************************************************************/
 
 
 void replaceWorst(Population original, Population replacements){
@@ -179,8 +152,8 @@ void replaceWorst(Population original, Population replacements){
 	else
 		half = (POP_SIZE / 2) + 1;
 
-    sortByFitness(replacements);
-    sortByReversedFitness(original);
+    sortByFitness(replacements, POP_SIZE);
+    sortByReversedFitness(original, POP_SIZE);
 
     for(i = 0 ; i < half; i++){
     	freeMember(original, i);
@@ -227,22 +200,55 @@ Population randomSelection(Population original){
 
 
 
-Individual findBest(Population pop){
-    int best_index;
-    int best_fitness;
-    int currentFitness;
+/******************************************************************************
+ **************************         Display        ****************************
+ *****************************************************************************/
+
+void printPopulation(Population pop){
     int i;
 
-    best_index = 0;
-    best_fitness = getFitness(pop->member[0]);
-
-    for(i=1; i < POP_SIZE; i++){
-    	currentFitness = getFitness(pop->member[i]);
-        if(currentFitness > best_fitness){
-            best_fitness = currentFitness;
-            best_index = i;
-        }
+    for (i = 0; i < POP_SIZE; i++){
+    	printf("%2d) ", i+1);
+        printIndividual(pop->member[i]);
     }
 
-    return pop->member[best_index];
+    printSummaryStatistics(pop);
+}
+
+void printSummaryStatistics(Population pop){
+    double mean;
+    double differenceSum;
+    double sd;
+
+    int max = 0;
+    int min = INT_MAX;
+    int fitnessSum;
+    int i;
+
+    fitnessSum = 0;
+    for(i = 0; i < POP_SIZE; i++){
+        fitnessSum = fitnessSum + getFitness(pop->member[i]);
+
+        if(getFitness(pop->member[i]) > max)
+            max = getFitness(pop->member[i]);
+
+        if(getFitness(pop->member[i]) < min)
+            min = getFitness(pop->member[i]);
+    }
+
+    mean = (double) fitnessSum / POP_SIZE;
+
+    differenceSum = 0;
+    for(i = 0; i < POP_SIZE; i++)
+        differenceSum = differenceSum + pow(mean - getFitness(pop->member[i]), 2);
+
+    sd = sqrt(differenceSum / POP_SIZE);
+
+    fprintf(stdout, "\nAverage = %.3lf\n", mean);
+    fprintf(stdout, "SD      = %.3lf\n", sd);
+    fprintf(stdout, "Min     = %d\n", min);
+    fprintf(stdout, "Max     = %d\n", max);
+
+//    // concise version
+//    fprintf(stdout, "Stats : %.5lf,\t%.5lf,\t%d,\t%d\n", mean, sd, min, max);
 }

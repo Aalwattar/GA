@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Filename : population.h
+ * FileName : population.h
  * Purpose  : a header for population.c
  *
  * Author   : Jennifer Winer
@@ -15,132 +15,140 @@
 
 typedef struct population * Population;
 
+
 /******************************************************************************
- ******************         POPULATION MANIPULATION         *******************
+ ***************         Construction and Initialization        ***************
  *****************************************************************************/
 
-// FIXME - comment here
-// this function sets up the static "class" variables such as the fitness
-// 		function and the mutation rate
-void initPopulationClass(double crossRate, double mutRate, int popSize, int numGenes, int (*numAllelesFunc)(int), int (*fitnessFunc)(int *));
-
+/******************************************************************************
+ * Name : initPopulationClass
+ *
+ * Purpose : Initialize the static "class" variables
+ *
+ * Arguments : crossRate = the probability of crossover occurring between each
+ * 					pair of individuals
+ * 			   popSize = The number of individuals in a population
+ *
+ * 			   All other Arguments are passed directly to initIndividualClass.
+ * 			   Please see individual.h for more information
+ *
+ * NOTE : This algorithm MUST be called before all other methods in this file
+ *****************************************************************************/
+void initPopulationClass(double crossRate, double mutRate, int popSize,
+							int numGenes, int (*numAllelesFunc)(int),
+							int (*fitnessFunc)(int *));
 
 /******************************************************************************
- * NAME : newRandPopulation
- * PURPOSE : Creates a population of individuals. Each individual will
- *              contain randomly generated genes, but is still a valid solution
- * 
- * RETURNS : A population of randomly generated individuals
- * 
- * NOTE : the population that is returned should eventually be freed through
- *              the usage of freePopulation();
+ * Name : newRandPopulation
+ *
+ * Purpose : Creates a population of individuals. Each individual will
+ *              have randomly generated genes, but is still a valid solution
  *****************************************************************************/
 Population newRandPopulation();
 
 /******************************************************************************
- * NAME : freePopulation
- * PURPOSE : Frees all dynamically allocated data from within a Population
- * 
- * PRECONDITIONS : the Population passed in as a parameter must have been
- *      previously created by newRandPopulation();
+ * Name : freePopulation
+ *
+ * Purpose : Frees all dynamically allocated data from within a Population
  *****************************************************************************/
-void freePopulation(Population);
-
-
-/******************************************************************************
- * NAME : evolvePopulation
- * PURPOSE : Perform recombination and mutation on the provided Population
- *****************************************************************************/
-void evolvePopulation(Population);
-
-
-/******************************************************************************
- * NAME : determineFitness
- * PURPOSE : Calculate the fitness of all members of a population
- *****************************************************************************/
-void determineFitness(Population);
+void freePopulation(Population pop);
 
 
 
 /******************************************************************************
- * NAME : sortByFitness
- * PURPOSE : Orders the individuals in a population in ascending order by
+ ***************************         Fitness        ***************************
+ *****************************************************************************/
+
+/******************************************************************************
+ * Name : sortByFitness
+ *
+ * Purpose : Orders the individuals in a population in ascending order by
  *              their fitness
+ *
+ * Arguments : pop = The population you wish to sort
+ * 			   popSize = the number of individuals in the population
  *****************************************************************************/
-void sortByFitness(Population);
+void sortByFitness(Population pop, int popSize);
 
 /******************************************************************************
- * NAME: sortByReverseFitness
- * PURPOSE: Orders the individuals in a population in descending order by
+ * Name: sortByReverseFitness
+ *
+ * Purpose: Orders the individuals in a population in descending order by
  * 				their fitness
+ *
+ * Arguments : pop = The population you wish to sort
+ * 			   popSize = the number of individuals in the population
  *****************************************************************************/
-void sortByReversedFitness(Population);
-
+void sortByReversedFitness(Population pop, int popSize);
 
 /******************************************************************************
- * NAME : printPopulation
- * PURPOSE : Print every individual's genotype with their fitness values
- *****************************************************************************/
-void printPopulation(Population);
-
-/******************************************************************************
- * NAME : printSummaryStatistics
- * PURPOSE : Print statistical information about a population to stdout
- *****************************************************************************/
-void printSummaryStatistics(Population);
-
-/******************************************************************************
- * NAME : replaceWorst
+ * Name : findBest
  *
- * PURPOSE : Replaces the worst individuals in one population with
- *              the best individuals from another
- *
- * ARGUMENTS : Population = the destination population
- *             Population = the source population
- *
- * PRECONDITIONS : Both populations must have already had the fitnesses of
-*                  	their members evaluated (by a previous call to the
- *                  function evaluateFitness)
- *
- * NOTE : This algorithm sorts each of the populations according to fitness
- *****************************************************************************/
-void replaceWorst(Population, Population);
-
-
-/******************************************************************************
- * NAME : tournamentSelection
- *
- * PURPOSE : Select individuals from a population based on the the hard
- *              tournament selection algorithm
- * ARGUMENTS : Population = The population that you wish to select from
- *
- * RETURNS : A Population that contains deep copies of all of the winners from
- *              the requested number of tournaments.
- *****************************************************************************/
-Population tournamentSelection(Population);
-
-
-/******************************************************************************
- * NAME : randomSelection
- *
- * PURPOSE : Randomly selects individuals from a population.
- * ARGUMENTS : Population = The population that you wish to select from
- *
- * RETURNS : A Population that contains deep copies of all of the winners from
- *              the requested number of tournaments.
- *****************************************************************************/
-Population randomSelection(Population);
-
-
-/******************************************************************************
- * NAME : findBest
- *
- * PURPOSE : Finds the individual with the best fitness
- * ARGUMENTS : Population = the population that you wish to search
- *
- * RETURNS : the index of the individual with the best fitness
+ * Purpose : Finds the individual with the best fitness
  *****************************************************************************/
 Individual findBest(Population);
+
+
+
+/******************************************************************************
+ ************************         Manipulation        *************************
+ *****************************************************************************/
+
+/******************************************************************************
+ * Name : evolvePopulation
+ *
+ * Purpose : Perform recombination and mutation on a Population
+ *****************************************************************************/
+void evolvePopulation(Population pop);
+
+/******************************************************************************
+ * Name : tourNamentSelection
+ *
+ * Purpose : Select individuals from a population based on the the hard
+ *              tourNament selection algorithm
+ *****************************************************************************/
+Population tournamentSelection(Population pop);
+
+/******************************************************************************
+ * Name : randomSelection
+ *
+ * Purpose : Randomly selects individuals from a population.
+ *****************************************************************************/
+Population randomSelection(Population pop);
+
+/******************************************************************************
+ * Name : replaceWorst
+ *
+ * Purpose : Replaces the worst individuals in one population with
+ *              the best individuals from another
+ *
+ * Arguments : pop1 = the destination population
+ *             pop2 = the source population
+ *****************************************************************************/
+void replaceWorst(Population pop1, Population pop2);
+
+
+
+/******************************************************************************
+ **************************         Display        ****************************
+ *****************************************************************************/
+
+/******************************************************************************
+ * Name : printPopulation
+ *
+ * Purpose : Print every individual's genotype and fitness
+ *****************************************************************************/
+void printPopulation(Population pop);
+
+/******************************************************************************
+ * Name : printSummaryStatistics
+ *
+ * Purpose : Print statistical information about a population to stdout
+ *
+ * NOTE : This function was developed by Ahmed Al-Watter.
+ *****************************************************************************/
+void printSummaryStatistics(Population pop);
+
 
 
 #endif	/* POPULATION_H */

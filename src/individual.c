@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 
 // TODO - is this variable unncessary?
@@ -105,6 +106,11 @@ int getFitness(Individual i){
 	return i->fitness;
 }
 
+void calculateFitness(Individual ind){
+	ind->fitness = evaluateFitness(ind->chromosome);
+}
+
+
 // the compare function for qsort
 int compareIndividuals(const void * p1, const void * p2){
     return (*(Individual *)p2)->fitness - (*(Individual *)p1)->fitness;
@@ -115,9 +121,6 @@ int compareIndividualsReversed(const void * p1, const void * p2){
     return (*(Individual *)p1)->fitness - (*(Individual *)p2)->fitness;
 }
 
-void calculateFitness(Individual ind){
-	ind->fitness = evaluateFitness(ind->chromosome);
-}
 
 
 /******************************************************************************
@@ -126,6 +129,7 @@ void calculateFitness(Individual ind){
 
 void mutate(Individual ind){
     int g;
+    bool recalcFitness;
     
     // TODO - checking the probability of EVERY gene of EVERY individual is
     	// likely a huge bottleneck. Is there a heuristic I can use that will
@@ -135,10 +139,16 @@ void mutate(Individual ind){
     	// 		mutated. Of that subset, mutate as below OR mutate a fixed
     	//		# or % of genes.
 
+    recalcFitness = false;
     for(g=0; g<NUM_GENES; g++){
         if(randomNumber() < MUTATION_RATE){
             ind->chromosome[g] = (getNumAlleles(g)) * randomNumber();
+            recalcFitness = true;
         }
+    }
+
+    if(recalcFitness){
+    	calculateFitness(ind);
     }
 }                              
 
@@ -167,6 +177,9 @@ void crossover(Individual ind1, Individual ind2){
         ind1->chromosome[g] = ind2->chromosome[g];
         ind2->chromosome[g] = temp;
     }
+
+    calculateFitness(ind1);
+    calculateFitness(ind2);
 }
 
 

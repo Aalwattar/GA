@@ -67,15 +67,28 @@ void freeIndividual(Individual i);
 /******************************************************************************
  ***************************         Fitness        ***************************
  *****************************************************************************/
-// FIXME - needs a comment
+
+/******************************************************************************
+ * Name : getFitness
+ *
+ * Purpose : Return the fitness of an individual
+ *****************************************************************************/
 int getFitness(Individual);
 
-// FIXME - needs commenting
+/******************************************************************************
+ * Name : compareIndividuals
+ *
+ * Purpose : Used by qsort to sort individuals in descending order
+ *****************************************************************************/
 int compareIndividuals(const void *, const void *);
+
+/******************************************************************************
+ * Name : compareIndividualsReversed
+ *
+ * Purpose : Used by qsort to sort individuals in ascending order
+ *****************************************************************************/
 int compareIndividualsReversed(const void *, const void *);
 
-//FIXME - DELETE LATER
-void calculateFitness(Individual);
 
 
 /******************************************************************************
@@ -110,6 +123,8 @@ void crossover(Individual ind1, Individual ind2);
  * Purpose : Print the genotype and fitness of an individual to stdout
  *****************************************************************************/
 void printIndividual(Individual);
+
+
 
 #endif	/* INDIVIDUAL_H */
 
