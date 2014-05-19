@@ -159,7 +159,6 @@ void replaceWorst(Population original, Population replacements){
     	freeMember(original, i);
     	original->member[i] = cloneIndividual(replacements->member[i]);
     }
-
 }
 
 
@@ -174,12 +173,17 @@ Population tournamentSelection(Population original){
         p1 = randomNumber() * POP_SIZE;
         p2 = randomNumber() * POP_SIZE;
 
-        if(compareIndividuals(original->member[p1], original->member[p2]) < 0){
+        while(p1 == p2)
+        	p2 = randomNumber() * POP_SIZE;
+
+        if(compareIndividuals(&(original->member[p1]), &(original->member[p2])) < 0){
         	mating_pool->member[i] = cloneIndividual(original->member[p1]);
         }else{
         	mating_pool->member[i] = cloneIndividual(original->member[p2]);
         }
     }
+
+    printPopulation(mating_pool);
     return mating_pool;
 }
 

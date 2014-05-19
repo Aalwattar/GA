@@ -13,8 +13,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 #include <getopt.h>
 
 #define PROBLEM_FILENAME "input/problem.txt"
@@ -24,16 +22,17 @@ static int STOP_CONDITION = 500;
 
 void initParameters(int, char **);
 
-void generationalGA(Population);
-void elitestGA(Population);
+Population generationalGA(Population);
+Population elitestGA(Population);
 
-// FUTURE - implement this
-bool populationConverged(Population * pop);
+// TODO - implement this
+// bool populationConverged(Population * pop);
 
 
 int main(int argc, char * argv[]){
 	Population pop;
 	Individual best_solution;
+	int generation_num = 0;
 
     initParameters(argc, argv);
 
@@ -44,8 +43,18 @@ int main(int argc, char * argv[]){
 	printPopulation(pop);
 #endif
 
-	elitestGA(pop);
-	//generationalGA(pop);
+    while(generation_num < STOP_CONDITION){
+
+#if  (defined VERBOSE || defined EXE)
+		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
+		printPopulation(pop);
+#endif
+
+		//pop = elitestGA(pop);
+		pop = generationalGA(pop);
+
+        generation_num++;
+    }
 
 #ifdef VERBOSE
 	fprintf(stdout, "\nFinal Population:\n");
@@ -61,46 +70,26 @@ int main(int argc, char * argv[]){
 }
 
 
-void elitestGA(Population pop){
+Population elitestGA(Population pop){
 	Population selected;
-	int generation_num = 0;
 
-	while(generation_num < STOP_CONDITION){
+	selected = tournamentSelection(pop);
+	evolvePopulation(selected);
 
-#if (defined VERBOSE || defined EXE)
-		fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
-		printPopulation(pop);
-#endif
+	replaceWorst(pop, selected);
+	freePopulation(selected);
 
-		selected = tournamentSelection(pop);
-		evolvePopulation(selected);
-
-		replaceWorst(pop, selected);
-		freePopulation(selected);
-
-		generation_num++;
-	}
+	return pop;
 }
 
-void generationalGA(Population pop){
+Population generationalGA(Population pop){
 	Population selected;
-	int generation_num = 0;
+        
+	selected = tournamentSelection(pop);
+	freePopulation(pop);
 
-    while(generation_num < STOP_CONDITION){
-        
-        #if  (defined VERBOSE || defined EXE)
-            fprintf(stdout, "\n-----------------   GENERATION %d   -----------------\n", generation_num + 1);
-            printPopulation(pop);
-        #endif
-        
-        selected = tournamentSelection(pop);
-        evolvePopulation(selected);
-        
-        freePopulation(pop);
-        pop = selected;
-        
-        generation_num++;
-    }
+	evolvePopulation(selected);
+	return selected;
 }
 
 void initParameters(int argc, char ** argv){
