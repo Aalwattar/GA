@@ -101,7 +101,6 @@ void initParameters(int argc, char ** argv){
     int c;
 
     opterr = 0;
-
     while((c = getopt(argc, argv, "c:g:i:m:p:r:s:t:")) != -1){
         switch(c){
             case 'c':
@@ -145,7 +144,7 @@ void initParameters(int argc, char ** argv){
         exit(1);
     }
     
-    // FIX - Check the return values
+    // FIXME - Check the return values
     seedRandGenerator(seed);
     initProblem(problem_filename);
     initPopulationClass(crossover_rate, mutation_rate, pop_size, getNumGenes(), &getNumAlleles, &evaluateFitness);

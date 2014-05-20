@@ -18,9 +18,9 @@
 #include <limits.h>
 
 // FIXME - These should be passed in from main, not hard coded values
-// they should NOT have an initial value
-static double CROSSOVER_RATE = 0.85;
-static int POP_SIZE = 50;
+static double CROSSOVER_RATE = -1;
+static int POP_SIZE = 0;
+
 
 struct population{
     Individual * member;
@@ -49,9 +49,8 @@ void initPopulationClass(double crossRate, double mutRate, int popSize, int numG
 	initIndividualClass(mutRate, numGenes, numAllelesFunc, fitnessFunc);
 }
 
-// FIXME - add a proper comment
-//  Private method that allocates memory for an Individual.
-// 	it does NOT set default values to its members
+//  Private method that allocates memory for a Population.
+// 	it does NOT set default values to its members.
 Population newPopulation(){
 	Population pop;
 
@@ -120,9 +119,6 @@ Individual findBest(Population pop){
     return pop->member[best_index];
 }
 
-
-
-
 void evolvePopulation(Population pop){
     int i;
     
@@ -131,7 +127,9 @@ void evolvePopulation(Population pop){
 			crossover(pop->member[i], pop->member[i + 1]);
     
     // Analyzing each gene separately is an unnecessarily slow process
-    // TODO - consider applying the mutation rate at the individual level. Then those chosen to "mutate" have some fixed percentage of their genes changed?
+    // TODO - consider applying the mutation rate at the individual level.
+    // Then those chosen to "mutate" have some fixed percentage of their
+    // genes changed?
     for(i=0; i < POP_SIZE; i++)
         mutate(pop->member[i]);
 }
@@ -142,7 +140,10 @@ void evolvePopulation(Population pop){
  ************************         Manipulation        *************************
  *****************************************************************************/
 
-
+// TODO - Make the number of Individuals replaced variable
+// TODO - Create an option to retain only the best individuals
+// 			from both populations, not only the top X from
+// 			the secondary population
 void replaceWorst(Population original, Population replacements){
     int half;
 	int i;
@@ -161,8 +162,6 @@ void replaceWorst(Population original, Population replacements){
     }
 }
 
-
-// FIXME - this method is broken? - CANNOT cause convergence?
 Population tournamentSelection(Population original){
     Population mating_pool;
     int p1, p2;
