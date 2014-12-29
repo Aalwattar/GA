@@ -36,7 +36,7 @@ VERBOSE_FLAGS	= -DVERBOSE -O3
 EXE_FLAGS	= -DEXE -O3 
 DIVERSTITY_FLAGS= -DDIVERSITY -O3
 
-C_INCLUDES     = -Iinclude -Ilibs -I${HOME}/include
+C_INCLUDES     = -Iinclude -Ilibs -I${HOME}/include -I../CommonParser
 
 L_INCLUDES     = -Llibs -L${HOME}/lib -lrcsSimulator -lofflineScheduler \
                   -lconfuse -lcommonInterfaces -lm
